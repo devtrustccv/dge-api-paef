@@ -1,0 +1,92 @@
+spring.application.name=sigse-api-v1
+server.servlet.context-path=/api
+server.port=8083
+api.version=1.0
+spring.datasource.url=jdbc:postgresql://localhost:5432/db_sigse
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.properties.hibernate.default_schema=public
+
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.show-sql=true
+
+
+
+
+### Minio.io configuration
+minio.url=http://localhost:9000
+minio.access-key=lO2kFP98vF2YhAbISFBS
+minio.secret-key=vYEM5KEL8Z8Hf8E9IA56hbUsPC5zAuh13luNULTD
+minio.bucket-name=igrp-dge
+
+### OTHERS CONFIGURATIONS
+spring.jackson.property-naming-strategy=SNAKE_CASE
+
+# URL base para start de processos no IGRP
+sigse.gateway.base-url=https://qa.devtrust.cv/sigse
+
+
+
+### Email config:
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=devtrust.dev@gmail.com
+spring.mail.send=true
+spring.mail.password=
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+
+
+## APPLICATION configuration
+application.autentika.user-info-url=https://dev-iam.devtrust.cv/realms/dge/protocol/openid-connect/userinfo
+application.session.jwt-secret=oeirtewryewyuytiti-rtiutio5uyiut-6touttuorttrorto-rtrouottyouier
+application.session.jwt-expiration-in-hours=3
+application.session.otp-expiration-in-minutes=5
+
+
+## CNI Integration configuration
+spring.cni.api-url=https://gateway-pdex.gov.cv/t/sniac.gov/PesquisaDoSNIAC/1.0/pesquisaDocumentoSNIAC
+spring.cni.api-token=dssdfgdfg.fdsgdfgdfg.dfgdfgdfg
+
+### Firebase configuration file for authentication
+firebase.config-path=classpath:firebase-adminsdk-keys.json
+
+
+### FLYWAY CONFIGURATIONS
+spring.flyway.enabled=true
+spring.flyway.baseline-on-migrate=true
+spring.flyway.location=classpath:db/migration
+spring.flyway.schemas=public
+spring.flyway.databaseType=postgresql
+
+
+
+# BD secundary (db_igrp_sigs)
+spring.datasource.secondary.url=jdbc:postgresql://localhost:5432/db_igrp_sigs
+spring.datasource.secondary.username=postgres
+spring.datasource.secondary.password=postgres
+spring.datasource.secondary.driver-class-name=org.postgresql.Driver
+
+
+### MongoDB (logs)
+mongodb.log.uri=mongodb://root:example@localhost:27017/?authSource=admin&tls=false
+mongodb.log.database_name=sigselog
+mongodb.log.changes.collection_name=changeLogs
+mongodb.log.errors.collection_name=errorLogs
+mongodb.log.app.collection_name=appLogs
+mongodb.log.jobs.collection_name=jobLogs
+
+### SMS Gateway configuration
+# Base URL do gateway de SMS
+sms.gateway.baseurl=https://sigse-sta.gov.cv
+# Endpoint relativo para envio de SMS
+sms.gateway.endpoint=/send-sms
+# Credenciais do gateway
+sms.username=SIGSE
+sms.password=SIGSE
+# Remetente, codificação e charset
+sms.from=SGIE
+sms.coding=2
+sms.charset=UTF-8

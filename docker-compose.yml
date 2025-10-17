@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: paef
+      POSTGRES_USER: paef
+      POSTGRES_PASSWORD: paef
+    ports:
+      - "5433:5432"
+    volumes:
+      - paef_pg:/var/lib/postgresql/data
+  api:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      PAEF_DB_PASSWORD: paef
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8080:8080"
+volumes:
+  paef_pg:
