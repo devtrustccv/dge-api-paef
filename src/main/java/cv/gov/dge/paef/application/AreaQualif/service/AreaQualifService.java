@@ -11,4 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface AreaQualifService {
     AreaQualif createOrUpdate(AreaQualifDTO dto);
+    boolean findExisting(String codigo, String versao);
 }

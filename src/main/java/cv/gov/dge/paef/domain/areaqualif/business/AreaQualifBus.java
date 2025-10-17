@@ -13,4 +13,7 @@ public interface AreaQualifBus {
     AreaQualifEntity save(AreaQualifEntity entity);
     boolean existsById(String id);
     boolean existsBySiglaCodigo(String sigla);
-}
+    AreaQualifEntity findOrCreateFamily(String codigoFamilia, String denominacaoFamilia);
+    AreaQualifEntity createFamily(String codigoFamilia, String denominacaoFamilia);
+    boolean existsQualification(String codigoQualif, String versao);
+    }

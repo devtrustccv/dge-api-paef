@@ -12,7 +12,6 @@ public interface AreaQualifMapper {
 
     AreaQualif toModel(AreaQualifEntity entity);
     @Mapping(target = "siglaCodigo",    source = "codigoQualif")
-    @Mapping(target = "idPai",          source = "codigoFamilia")
     @Mapping(target = "dmNivelArabico", source = "nivel")
     @Mapping(target = "descricao",      source = "denominacaoQualif")
     @Mapping(target = "versao",         source = "versao")
