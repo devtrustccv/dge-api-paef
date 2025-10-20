@@ -20,6 +20,7 @@ public record EntidadeDetalheDTO(
     @Builder
     public record AcreditacaoDTO(
             @JsonProperty("codigo_familia") String codigoFamilia,
+            @JsonProperty("denominacao_familia") String denominacaoFamilia,
             String nivel,
             @JsonProperty("self") String self,
             String versao,

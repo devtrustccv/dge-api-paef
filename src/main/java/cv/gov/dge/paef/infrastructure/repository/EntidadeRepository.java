@@ -4,7 +4,9 @@ package cv.gov.dge.paef.infrastructure.repository;
 import cv.gov.dge.paef.infrastructure.EntidadeEntity;
 import cv.gov.dge.paef.interfaces.dto.AcreditacaoProjection;
 import cv.gov.dge.paef.interfaces.dto.EntidadeAcreditacaoRow;
+import cv.gov.dge.paef.interfaces.dto.EntidadePffpRow;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
@@ -50,6 +52,7 @@ public interface EntidadeRepository extends JpaRepository<EntidadeEntity, BigDec
                   e.url                        as url,
                   e.geog_local_id              as geogLocalId,
                   af.sigla_codigo                                   as codigoFamilia,
+                  af.descricao                                      as denominacaoFamilia,
                   coalesce(f.dm_nivel_romano, aq.dm_nivel_arabico)  as nivel,
                   f.self_id_cnq                                     as self,
                   f.versao                                          as versao,
@@ -73,4 +76,37 @@ public interface EntidadeRepository extends JpaRepository<EntidadeEntity, BigDec
                 left join paef.paef_t_area_qualif af on af.id         = f.id_area_qualif;
         """, nativeQuery = true)
     List<EntidadeAcreditacaoRow> findEntidadesComAlvaraNaoEnviadoSgf();
+
+    @Query(value = """
+            select
+                  e.id                                   as entId,
+                  e.denominacao_social                   as denominacao,
+                  coalesce(e.denominacao_social_norm,'') as denominacaoNorm,
+                  e.nif                                  as nif,
+                  e.dm_natureza                          as natureza,
+                  coalesce(e.email,'')                   as email,
+                  coalesce(e.url,'')                     as url,
+                  coalesce(e.geog_local_id,'')           as geogLocalId,
+                  coalesce(e.endereco,'')                as morada,
+                  coalesce(e.telemovel,'')               as telemovel,
+                  coalesce(e.telefone,'')                as telefone,
+                  coalesce(a.nr_alvara,'')               as nrAlvara,
+                  coalesce(e.representante_legal,'') as nomePontoFocal,
+                  ca.email_user                          as emailUser,
+                  ca.flag_master                         as flagMaster
+                from paef.paef_t_entidade e
+                join paef.paef_t_alvara a
+                     on a.id_entidade = e.id
+                    and a.dm_situacao = 'A'                         -- deve ter 1+ alvará ativo
+                left join paef.paef_t_conta_acesso ca
+                     on ca.id_entidade = e.id
+                    and ca.dm_estado_conta = 'A'                    -- << apenas contas ativas
+                where e.sended_to_pffp is distinct from true
+    """, nativeQuery = true)
+    List<EntidadePffpRow> findEntidadesPendentesPffp();
+
+
+    @Modifying
+    @Query(value = "update paef.paef_t_entidade set sended_to_pffp = true where nif = :nif", nativeQuery = true)
+    int markPffpSentByNif(BigDecimal nif);
 }

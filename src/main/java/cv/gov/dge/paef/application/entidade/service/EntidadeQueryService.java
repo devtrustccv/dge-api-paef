@@ -1,8 +1,11 @@
 package cv.gov.dge.paef.application.entidade.service;
 
 import cv.gov.dge.paef.application.entidade.dto.EntidadeDetalheDTO;
+import cv.gov.dge.paef.application.entidade.dto.EntidadePffpDTO;
 import cv.gov.dge.paef.infrastructure.repository.EntidadeRepository;
 import cv.gov.dge.paef.interfaces.dto.EntidadeAcreditacaoRow;
+import cv.gov.dge.paef.interfaces.dto.EntidadePffpRow;
+import cv.gov.dge.paef.interfaces.dto.PffpMarkSentResultDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +92,7 @@ public class EntidadeQueryService {
                 accByEnt.get(r.getEntId()).add(
                         EntidadeDetalheDTO.AcreditacaoDTO.builder()
                                 .codigoFamilia(r.getCodigoFamilia())
+                                .denominacaoFamilia(r.getDenominacaoFamilia())
                                 .nivel(r.getNivel())
                                 .self(r.getSelf())
                                 .versao(r.getVersao())
@@ -114,5 +118,62 @@ public class EntidadeQueryService {
             result.add(b.build());
         });
         return result;
+    }
+
+    public List<EntidadePffpDTO> listEntidadesPendentesPFFP() {
+        var rows = entidadeRepository.findEntidadesPendentesPffp();
+
+        Map<String, EntidadePffpDTO.EntidadePffpDTOBuilder> builders = new LinkedHashMap<>();
+        Map<String, List<EntidadePffpDTO.ContaAcessoDTO>> contasByEnt = new LinkedHashMap<>();
+
+        for (var r : rows) {
+            builders.computeIfAbsent(r.getEntId(), id ->
+                    EntidadePffpDTO.builder()
+                            .denominacao(r.getDenominacao())
+                            .denominacaoNorm(r.getDenominacaoNorm())
+                            .nif(r.getNif() == null ? null : r.getNif().longValue())
+                            .natureza(r.getNatureza())
+                            .email(r.getEmail())
+                            .url(r.getUrl())
+                            .geogLocalId(r.getGeogLocalId())
+                            .morada(r.getMorada())
+                            .telemovel(r.getTelemovel())
+                            .telefone(r.getTelefone())
+                            .nrAlvara(r.getNrAlvara())
+                            .nomePontoFocal(r.getNomePontoFocal())
+                            .contasAcesso(new ArrayList<>())
+            );
+            contasByEnt.computeIfAbsent(r.getEntId(), id -> new ArrayList<>());
+            if (r.getEmailUser() != null) {
+                contasByEnt.get(r.getEntId()).add(
+                        EntidadePffpDTO.ContaAcessoDTO.builder()
+                                .emailUser(r.getEmailUser())
+                                .flagMaster(r.getFlagMaster())
+                                .build()
+                );
+            }
+        }
+
+        List<EntidadePffpDTO> result = new ArrayList<>();
+        builders.forEach((id, b) -> {
+            b.contasAcesso(contasByEnt.getOrDefault(id, List.of()));
+            result.add(b.build());
+        });
+        return result;
+
+    }
+
+    @Transactional
+    public List<PffpMarkSentResultDTO> markManyByNifs(List<Long> nifs) {
+        List<PffpMarkSentResultDTO> results = new ArrayList<>();
+        for (Long nif : nifs) {
+            int updated = entidadeRepository.markPffpSentByNif(new BigDecimal(nif));
+            results.add(PffpMarkSentResultDTO.builder()
+                    .nif(nif)
+                    .updated(updated > 0)
+                    .message(updated > 0 ? "Marcado sended_to_pffp=true" : "NIF não encontrado")
+                    .build());
+        }
+        return results;
     }
 }

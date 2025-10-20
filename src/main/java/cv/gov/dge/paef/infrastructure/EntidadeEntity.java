@@ -76,4 +76,7 @@ public class EntidadeEntity {
 
     @Column(name="is_on_portal")
     private Boolean isOnPortal;
+
+    @Column(name = "sended_to_pffp")
+    private Boolean sendedToPffp;
 }

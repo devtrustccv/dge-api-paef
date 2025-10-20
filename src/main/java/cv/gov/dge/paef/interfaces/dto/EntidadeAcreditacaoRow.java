@@ -14,6 +14,7 @@ public interface EntidadeAcreditacaoRow {
 
     // --- acreditação ---
     String getCodigoFamilia();
+    String getDenominacaoFamilia();
     String getNivel();
     String getSelf();
     String getVersao();
