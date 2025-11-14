@@ -3,7 +3,7 @@ package cv.gov.dge.paef.web.formacao;
 import cv.gov.dge.paef.application.formacao.service.FormacaoService;
 import cv.gov.dge.paef.infrastructure.FormacaoEntity;
 import cv.gov.dge.paef.infrastructure.mapper.FormacaoMapper;
-import cv.gov.dge.paef.interfaces.dto.FormacaoDTO;
+import cv.gov.dge.paef.application.formacao.dto.FormacaoDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

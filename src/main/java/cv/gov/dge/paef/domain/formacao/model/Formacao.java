@@ -7,5 +7,5 @@ public class Formacao {
     private String idQualificacao; private String areaDesc; private String qualificacaoDesc;
     private String dmNivelRomano; private String flagCatalogo; private LocalDate dtRegisto;
     private LocalDate dtFimPrev; private LocalDate dtIniPrev; private String dmMetodologia;
-    private String selfIdCnq; private String versao;
+    private String selfIdCnq; private String versao; private String dmEstado;
 }

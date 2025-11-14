@@ -2,7 +2,7 @@ package cv.gov.dge.paef.infrastructure.mapper;
 
 import cv.gov.dge.paef.domain.formacao.model.Formacao;
 import cv.gov.dge.paef.infrastructure.FormacaoEntity;
-import cv.gov.dge.paef.interfaces.dto.FormacaoDTO;
+import cv.gov.dge.paef.application.formacao.dto.FormacaoDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

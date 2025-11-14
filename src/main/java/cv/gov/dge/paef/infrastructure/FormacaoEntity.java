@@ -55,6 +55,9 @@ public class FormacaoEntity {
     @Column(name="self_id_cnq")
     private String selfIdCnq;         // -> self
 
+    @Column(name="dm_estado")
+    private String dmEstado;
+
     @Column
     private String versao;            // -> versao
 }

@@ -14,5 +14,6 @@ public record AreaQualifDTO(
         @NotBlank String versao,
         String nivel,
         String codigoFamilia,
-        String denominacaoFamilia // não persiste aqui
+        String denominacaoFamilia,
+        String tipo// não persiste aqui
 ) { }
