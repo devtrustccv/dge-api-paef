@@ -9,7 +9,6 @@ on:
   # Dispara em qualquer push para dev-az (ex.: merge)
   push:
     branches: [ gitlab-prod ]
-
 env:
   # Branch de origem no GitHub
   SOURCE_BRANCH: gitlab-prod
