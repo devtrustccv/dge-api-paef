@@ -1,5 +1,5 @@
 // src/main/java/cv/gov/dge/paef/interfaces/dto/FormacaoDTO.java
-package cv.gov.dge.paef.interfaces.dto;
+package cv.gov.dge.paef.application.formacao.dto;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -19,5 +19,6 @@ public record FormacaoDTO(
         LocalDate dtIniPrev,
         String dmMetodologia,
         String selfIdCnq,
-        String versao
+        String versao,
+        String dmEstado
 ) {}
