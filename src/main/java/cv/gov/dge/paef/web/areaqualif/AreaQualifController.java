@@ -27,6 +27,7 @@ public class AreaQualifController {
     @PostMapping("/save")
     public ResponseEntity<ApiResponse<List<AreaQualifDTO>>> create(@Valid @RequestBody EnvelopeData<List<AreaQualifDTO>> datas) {
         List<AreaQualifDTO> dtos = datas.getData();
+        System.out.println("here");
         boolean success = true;
         try {
             for (AreaQualifDTO dto : dtos) {

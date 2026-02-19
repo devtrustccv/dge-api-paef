@@ -1,4 +1,4 @@
-package cv.gov.dge.paef.interfaces.dto;
+package cv.gov.dge.paef.interfaces.dto.Entidade;
 
 import java.math.BigDecimal;
 

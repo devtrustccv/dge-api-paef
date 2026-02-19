@@ -1,5 +1,5 @@
 // src/main/java/cv/gov/dge/paef/infrastructure/projection/AcreditacaoProjection.java
-package cv.gov.dge.paef.interfaces.dto;
+package cv.gov.dge.paef.interfaces.dto.Alvara;
 
 public interface AcreditacaoProjection {
     String getCodigoFamilia();
