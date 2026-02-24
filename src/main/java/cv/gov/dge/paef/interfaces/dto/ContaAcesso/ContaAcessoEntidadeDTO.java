@@ -8,8 +8,7 @@ import lombok.Builder;
 public record ContaAcessoEntidadeDTO(
         String id,
         String utilizador,
-        @JsonProperty("principalMaster") Integer principalMaster,
-        @JsonProperty("principalMasterCheck") Integer principalMasterCheck,
+        Integer principalMaster,
         String dataRegisto,
         String estado
 ) {}

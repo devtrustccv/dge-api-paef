@@ -6,6 +6,6 @@ import lombok.Builder;
 
 @Builder
 public record ProcOnlineDTO(
-        @JsonProperty("id_tp_processo") String idTpProcesso,
-        @JsonProperty("tipo_pedido__processo") String tipoPedidoProcesso
+        String idTpProcesso,
+        String tipoPedidoProcesso
 ) {}

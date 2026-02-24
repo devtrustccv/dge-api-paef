@@ -52,4 +52,5 @@ public interface ContaAcessoRepository extends JpaRepository<ContaAcessoEntity, 
         """, nativeQuery = true)
     List<ContaAcessoRow> findAllByEntidadeNif(@Param("nif") BigDecimal nif);
 
+    List<ContaAcessoEntity> findByIdEntidadeAndIdNot(String idEntidade, String id);
 }

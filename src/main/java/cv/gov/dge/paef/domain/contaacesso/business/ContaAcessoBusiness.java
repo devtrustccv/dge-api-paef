@@ -58,7 +58,6 @@ public class ContaAcessoBusiness {
                     .id(r.getId())
                     .utilizador(r.getEmailUser())
                     .principalMaster(isMaster ? 1 : 0)
-                    .principalMasterCheck(isMaster ? 1 : 2)
                     .dataRegisto(r.getDataRegisto() == null ? null : r.getDataRegisto().format(fmt))
                     .estado(estadoResolver.resolve(r.getDmEstadoConta()))
                     .build();
