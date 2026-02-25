@@ -3,10 +3,12 @@ package cv.gov.dge.paef.infrastructure.repository;
 import cv.gov.dge.paef.infrastructure.DomainViewEntity;
 import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface DomainRepository extends JpaRepository<DomainViewEntity, String> {
 
-    @org.springframework.data.jpa.repository.Query(value = """
+    @Query(value = """
         select valor as key, description as value
         from paef.v_paef_dominio_igrp
         where dominio = :dominio
@@ -14,7 +16,7 @@ public interface DomainRepository extends JpaRepository<DomainViewEntity, String
     """, nativeQuery = true)
     java.util.List<OptionDTO> findByDominio(@org.springframework.data.repository.query.Param("dominio") String dominio);
 
-    @org.springframework.data.jpa.repository.Query(value = """
+    @Query(value = """
         select description
         from paef.v_paef_dominio_igrp
         where lower(dominio) = lower(:dominio)
@@ -22,7 +24,7 @@ public interface DomainRepository extends JpaRepository<DomainViewEntity, String
         limit 1
     """, nativeQuery = true)
     String findDescByDominioAndValor(
-            @org.springframework.data.repository.query.Param("dominio") String dominio,
-            @org.springframework.data.repository.query.Param("valor") String valor
+            @Param("dominio") String dominio,
+            @Param("valor") String valor
     );
 }

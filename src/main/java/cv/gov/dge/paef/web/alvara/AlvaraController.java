@@ -4,6 +4,7 @@ import cv.gov.dge.paef.application.alvara.dto.AlvaraDTO;
 import cv.gov.dge.paef.application.alvara.service.AlvaraService;
 import cv.gov.dge.paef.infrastructure.AlvaraEntity;
 import cv.gov.dge.paef.infrastructure.mapper.AlvaraMapper;
+import cv.gov.dge.paef.interfaces.dto.Alvara.AlvaraListItemDTO;
 import cv.gov.dge.paef.interfaces.dto.EnvelopeData;
 import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import jakarta.validation.Valid;
@@ -27,5 +28,12 @@ public class AlvaraController {
     public ResponseEntity<EnvelopeData<List<OptionDTO>>> alvarasByEntidade(@PathVariable Long nif) {
         var out = service.listOptionsByEntidadeNif(nif);
         return ResponseEntity.ok(new EnvelopeData<>(out));
+    }
+    @GetMapping("/{nif}/alvaras-validos")
+    public ResponseEntity<EnvelopeData<List<AlvaraListItemDTO>>> listValidos(
+            @PathVariable Long nif,
+            @RequestParam(required = false) Integer limit
+    ) {
+        return ResponseEntity.ok(new EnvelopeData<>(service.listValidosByNif(nif, limit)));
     }
 }

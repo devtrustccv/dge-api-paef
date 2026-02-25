@@ -2,6 +2,7 @@ package cv.gov.dge.paef.application.contaacesso.service;
 
 import cv.gov.dge.paef.application.audit.AlteracaoHistoricoService;
 import cv.gov.dge.paef.domain.contaacesso.business.ContaAcessoBusiness;
+import cv.gov.dge.paef.infrastructure.ContaAcessoEntity;
 import cv.gov.dge.paef.infrastructure.repository.ContaAcessoRepository;
 import cv.gov.dge.paef.infrastructure.repository.EntidadeRepository;
 import cv.gov.dge.paef.interfaces.dto.ApiResponse;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ public class ContaAcessoService {
     private static final String TP_REL_CONTA = "CONTA_ACESSO";
     private static final String ATIVO = "A";     // getConfig.ATIVO
     private static final String INATIVO = "I";   // getConfig.INATIVO
+    private static final String ORIGEM_ONLINE = "ONLINE";
 
     public ContaAcessoService(ContaAcessoBusiness business,
                               ContaAcessoRepository contaRepo,
@@ -177,6 +180,48 @@ public class ContaAcessoService {
         return ApiResponse.ok(
                 "Estado atualizado",
                 Map.of("id", id, "dmEstadoConta", c.getDmEstadoConta(), "flagMaster", c.getFlagMaster())
+        );
+    }
+
+    @Transactional
+    public ApiResponse<?> associar(Long nif, String emailUser, String actorEmail) {
+
+        var ent = entidadeRepo.findByNif(new BigDecimal(nif)).orElse(null);
+        if (ent == null) {
+            return ApiResponse.fail("Entidade não encontrada para o NIF informado", null);
+        }
+
+        String idEntidade = ent.getId();
+
+        // regra: não permitir duplicado por entidade + email
+        boolean exists = contaRepo.existsByIdEntidadeAndEmailUserIgnoreCase(idEntidade, emailUser);
+        if (exists) {
+            return ApiResponse.fail(
+                    "Já existe uma conta com este email para esta entidade. Por Favor Verificar!",
+                    null);
+        }
+
+        var c = new ContaAcessoEntity();
+       // c.setId(UUID.randomUUID().toString()); // se o teu ID for gerado por @GenericGenerator, remove esta linha
+        c.setIdEntidade(idEntidade);
+        c.setEmailUser(emailUser);
+        c.setFlagMaster(NAO);
+        c.setDmEstadoConta(ATIVO);
+        c.setDataRegisto(LocalDate.now());
+        c.setUserRegisto(actorEmail == null ? "" : actorEmail);
+        c.setDmOrigemReg(ORIGEM_ONLINE);
+
+        contaRepo.save(c);
+
+        return  ApiResponse.ok(
+
+                "Conta associada com sucesso",
+                Map.of(
+                        "id", c.getId(),
+                        "emailUser", c.getEmailUser(),
+                        "flagMaster", c.getFlagMaster(),
+                        "dmEstadoConta", c.getDmEstadoConta()
+                )
         );
     }
 

@@ -53,4 +53,7 @@ public interface ContaAcessoRepository extends JpaRepository<ContaAcessoEntity, 
     List<ContaAcessoRow> findAllByEntidadeNif(@Param("nif") BigDecimal nif);
 
     List<ContaAcessoEntity> findByIdEntidadeAndIdNot(String idEntidade, String id);
+
+    boolean existsByIdEntidadeAndEmailUserIgnoreCase(String idEntidade, String emailUser);
+
 }

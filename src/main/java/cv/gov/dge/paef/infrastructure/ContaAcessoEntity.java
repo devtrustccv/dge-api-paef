@@ -1,11 +1,9 @@
 package cv.gov.dge.paef.infrastructure;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 
@@ -16,6 +14,12 @@ import java.time.LocalDate;
 public class ContaAcessoEntity {
 
     @Id
+    @GeneratedValue(generator = "uuid-no-dash")
+    @GenericGenerator(
+            name = "uuid-no-dash",
+            strategy = "cv.gov.dge.paef.helpers.CustomUuidGenerator"
+    )
+    @Column(length = 32, nullable = false)
     private String id;
 
     @Column(name="id_entidade")
