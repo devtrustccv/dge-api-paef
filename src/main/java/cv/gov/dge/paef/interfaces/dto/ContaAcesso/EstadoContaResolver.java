@@ -8,8 +8,8 @@ import java.util.Map;
 public class EstadoContaResolver {
 
     private static final Map<String, String> MAP = Map.of(
-            "A", "Ativa",
-            "I", "Inativa"
+            "A", "Ativo",
+            "I", "Inativo"
     );
 
     public String resolve(String dmEstadoConta) {

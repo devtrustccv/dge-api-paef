@@ -4,7 +4,7 @@ package cv.gov.dge.paef.interfaces.rest;
 import cv.gov.dge.paef.domain.geografia.service.GeografiaService;
 import cv.gov.dge.paef.infrastructure.mapper.GeografiaMapper;
 import cv.gov.dge.paef.interfaces.dto.EnvelopeData;
-import cv.gov.dge.paef.interfaces.dto.GeografiaOptionDTO;
+import cv.gov.dge.paef.interfaces.dto.Geografia.GeografiaOptionDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

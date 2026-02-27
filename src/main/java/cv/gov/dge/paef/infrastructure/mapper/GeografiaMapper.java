@@ -3,7 +3,7 @@ package cv.gov.dge.paef.infrastructure.mapper;
 
 import cv.gov.dge.paef.domain.geografia.model.GeografiaOption;
 import cv.gov.dge.paef.infrastructure.GeografiaEntity;
-import cv.gov.dge.paef.interfaces.dto.GeografiaOptionDTO;
+import cv.gov.dge.paef.interfaces.dto.Geografia.GeografiaOptionDTO;
 import org.springframework.stereotype.Component;
 
 @Component

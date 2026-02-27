@@ -2,6 +2,7 @@
 package cv.gov.dge.paef.infrastructure.repository;
 
 import cv.gov.dge.paef.infrastructure.AlvaraEntity;
+import cv.gov.dge.paef.interfaces.dto.Alvara.AlvaraHeaderRow;
 import cv.gov.dge.paef.interfaces.dto.Alvara.AlvaraOptionRow;
 import cv.gov.dge.paef.interfaces.dto.Alvara.VPaefAlvaraRow;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface AlvaraRepository extends JpaRepository<AlvaraEntity, String> {
     List<AlvaraEntity> findByIdEntidade(String idEntidade);
@@ -65,4 +67,41 @@ public interface AlvaraRepository extends JpaRepository<AlvaraEntity, String> {
             @Param("situacao") String situacao,
             @Param("limit") int limit
     );
+
+    @Query(value = """
+        select
+          v.id_alvara              as idAlvara,
+          v.id_entidade            as idEntidade,
+          v.id_processo            as idProcesso,
+          v.nr_alvara              as nrAlvara,
+          v.descricao_tipo_alvara  as descricaoTipoAlvara,
+          v.dm_situacao            as dmSituacao,
+          v.data_emissao           as dataEmissao,
+          v.data_pedido            as dataPedido,
+          v.data_validade          as dataValidade,
+          v.estado_alvara_descricao as estadoAlvaraDescricao,
+          v.nr_processo            as nrProcesso,
+
+          v.id_estabelecimento     as idEstabelecimento,
+          v.designacao             as designacao,
+          v.local_estabelecimento  as localEstabelecimento,
+          v.endereco_estabelecimento as enderecoEstabelecimento,
+          v.caixa_postal_estabelecimento as caixaPostalEstabelecimento,
+          v.email_estabelecimento  as emailEstabelecimento,
+          v.telefone_estabelecimento as telefoneEstabelecimento,
+          v.telemovel_estabelecimento as telemovelEstabelecimento,
+
+          v.nome_respoinsavel      as nomeRespoinsavel,
+          v.dm_tp_doc              as dmTpDoc,
+          v.nr_doc_responsavel     as nrDocResponsavel,
+          v.telemovel_responsavel  as telemovelResponsavel,
+          v.telefone_responsavel   as telefoneResponsavel,
+          v.email_responsavel      as emailResponsavel,
+          v.dm_nivel_academico     as dmNivelAcademico
+        from paef.v_paef_alvara v
+        where v.id_alvara = :idAlvara
+        limit 1
+        """, nativeQuery = true)
+    Optional<AlvaraHeaderRow> findHeader(@Param("idAlvara") String idAlvara);
+
 }

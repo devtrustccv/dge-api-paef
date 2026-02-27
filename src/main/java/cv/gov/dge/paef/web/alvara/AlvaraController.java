@@ -1,6 +1,7 @@
 package cv.gov.dge.paef.web.alvara;
 
 import cv.gov.dge.paef.application.alvara.dto.AlvaraDTO;
+import cv.gov.dge.paef.application.alvara.service.AlvaraDetalheService;
 import cv.gov.dge.paef.application.alvara.service.AlvaraService;
 import cv.gov.dge.paef.infrastructure.AlvaraEntity;
 import cv.gov.dge.paef.infrastructure.mapper.AlvaraMapper;
@@ -16,8 +17,8 @@ import java.util.List;
 
 @RestController @RequestMapping("/alvaras")
 public class AlvaraController {
-    private final AlvaraService service; private final AlvaraMapper mapper;
-    public AlvaraController(AlvaraService s, AlvaraMapper m){ this.service=s; this.mapper=m; }
+    private final AlvaraService service;  private final AlvaraDetalheService detService; private final AlvaraMapper mapper;
+    public AlvaraController(AlvaraService s, AlvaraDetalheService d, AlvaraMapper m){ this.service=s; this.detService=d; this.mapper=m; }
 
     @PostMapping
     public ResponseEntity<AlvaraEntity> create(@Valid @RequestBody AlvaraDTO dto){
@@ -35,5 +36,9 @@ public class AlvaraController {
             @RequestParam(required = false) Integer limit
     ) {
         return ResponseEntity.ok(new EnvelopeData<>(service.listValidosByNif(nif, limit)));
+    }
+    @GetMapping("/{idAlvara}/detalhes")
+    public ResponseEntity<EnvelopeData<?>> detalhes(@PathVariable String idAlvara) {
+        return ResponseEntity.ok(new EnvelopeData<>(detService.detalhes(idAlvara)));
     }
 }

@@ -1,5 +1,5 @@
 // src/main/java/cv/gov/dge/paef/interfaces/dto/GeografiaOptionDTO.java
-package cv.gov.dge.paef.interfaces.dto;
+package cv.gov.dge.paef.interfaces.dto.Geografia;
 
 import lombok.Builder;
 
