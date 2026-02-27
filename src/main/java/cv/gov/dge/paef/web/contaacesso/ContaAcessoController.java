@@ -66,7 +66,7 @@ public class ContaAcessoController {
             @PathVariable String id,
             @Valid @RequestBody ToggleMasterRequest body
     ) {
-        var resp = service.toggleMaster(id, body.nifEntidade(), body.actorEmail());
+        var resp = service.toggleMaster(id, body.nif(), body.actorEmail());
         return ResponseEntity.ok(new EnvelopeData<>(resp));
     }
 

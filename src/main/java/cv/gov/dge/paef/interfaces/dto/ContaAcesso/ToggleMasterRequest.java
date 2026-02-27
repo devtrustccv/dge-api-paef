@@ -4,6 +4,6 @@ package cv.gov.dge.paef.interfaces.dto.ContaAcesso;
 import jakarta.validation.constraints.NotNull;
 
 public record ToggleMasterRequest(
-        @NotNull Long nifEntidade,
+        @NotNull Long nif,
         String actorEmail
 ) {}
