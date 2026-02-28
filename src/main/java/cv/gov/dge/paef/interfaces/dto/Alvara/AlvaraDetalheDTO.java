@@ -25,6 +25,7 @@ public record AlvaraDetalheDTO(
         // Estabelecimento
         String designacao,
         String ilha,
+        String ilhaId,
         String concelho,
         String freguesia,
         String zona,

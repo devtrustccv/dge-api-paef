@@ -138,6 +138,7 @@ public class AlvaraDetalheService {
                 .nrProcesso(h.getNrProcesso())
 
                 .designacao(h.getDesignacao())
+                .ilhaId(geo == null ? "" : geo.getIlhaId())
                 .ilha(geo == null ? "" : geo.getIlha())
                 .concelho(geo == null ? "" : geo.getConcelho())
                 .freguesia(geo == null ? "" : geo.getFreguesia())
