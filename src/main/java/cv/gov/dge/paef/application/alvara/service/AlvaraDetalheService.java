@@ -8,6 +8,7 @@ import cv.gov.dge.paef.interfaces.dto.EquipamentoDTO;
 import cv.gov.dge.paef.interfaces.dto.EquipamentoRow;
 import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import cv.gov.dge.paef.interfaces.dto.Qualificacao.FormacaoDTO;
+import cv.gov.dge.paef.interfaces.dto.logs.HistoricoDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class AlvaraDetalheService {
     private final FormacaoRepository formRepo;
     private final EquipamentoRepository equipRepo;
     private final RhRepository rhRepo;
+    private final LogAlteracaoRepository logRepo;
     private final DominioService dominioService; // teu serviço de domínios
 
     // Ajusta para teu config
@@ -43,7 +45,7 @@ public class AlvaraDetalheService {
         this.formRepo = formRepo;
         this.equipRepo = equipRepo;
         this.rhRepo = rhRepo;
-        //this.logRepo = logRepo;
+        this.logRepo = logRepo;
         this.dominioService = dominioService;
     }
 
@@ -113,15 +115,15 @@ public class AlvaraDetalheService {
                 .toList();
 
         // Histórico (username via serviço teu; aqui deixo “id” se não existir)
-       /* List<HistoricoAlvaraDTO> hist = logRepo.findHistoricoAlvara(idAlvara).stream()
-                .map(l -> HistoricoAlvaraDTO.builder()
+        List<HistoricoDTO> hist = logRepo.findHistoricoAlvara(idAlvara).stream()
+                .map(l -> HistoricoDTO.builder()
                         .dataUser((l.getDataRegisto() == null ? "" : sdf.format(l.getDataRegisto()))
                                 + "/" + (l.getUserRegistoId() == null ? "" : l.getUserRegistoId().toString()))
                         .estado(l.getCampoAlt())
                         .valorAnterior(l.getValorAnterior())
                         .valorAtual(l.getValorAtual())
                         .build())
-                .toList();*/
+                .toList();
 
         var dto = AlvaraDetalheDTO.builder()
                 .idAlvara(h.getIdAlvara())
@@ -164,7 +166,7 @@ public class AlvaraDetalheService {
                 .formacoes(formacoes)
                 .equipamentos(equipamentos)
                 .recursosHumanos(rhs)
-                //.historico(hist)
+                .historico(hist)
                 .build();
 
         return ApiResponse.ok("Detalhe Alvará carregado com sucesso",dto);

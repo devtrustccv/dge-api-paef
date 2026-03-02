@@ -3,6 +3,7 @@ package cv.gov.dge.paef.interfaces.dto.Alvara;
 import cv.gov.dge.paef.interfaces.dto.EquipamentoDTO;
 import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import cv.gov.dge.paef.interfaces.dto.Qualificacao.FormacaoDTO;
+import cv.gov.dge.paef.interfaces.dto.logs.HistoricoDTO;
 import lombok.Builder;
 import java.util.List;
 
@@ -51,7 +52,6 @@ public record AlvaraDetalheDTO(
         // Listas
         List<FormacaoDTO> formacoes,
         List<EquipamentoDTO> equipamentos,
-        List<OptionDTO> recursosHumanos
-        //,
-        //List<HistoricoAlvaraDTO> historico
+        List<OptionDTO> recursosHumanos,
+        List<HistoricoDTO> historico
 ) {}
