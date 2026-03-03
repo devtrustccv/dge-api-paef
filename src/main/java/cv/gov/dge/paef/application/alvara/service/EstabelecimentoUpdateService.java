@@ -46,7 +46,7 @@ public class EstabelecimentoUpdateService {
                     "É obrigatorio inserir pelo menus um contato do Estabelecimento. Ou o telefone ou o telemovel. Por favor verificar!",
                     null);
         }
-        if (blank(req.telefoneResp()) && blank(req.telemovelResp())) {
+        if (blank(req.telefResp()) && blank(req.telemResp())) {
             return ApiResponse.fail(
                     "É obrigatorio inserir pelo menus um contato do Responsável. Ou o telefone ou o telemovel. Por favor verificar!",
                     null);
@@ -108,8 +108,8 @@ public class EstabelecimentoUpdateService {
         est.setNomeResp(req.nomeResp());
         est.setDmTpDoc(req.tipoDocumentoResp());
         est.setNrDocResp(req.nrDocumentoResp());
-        est.setTelemovelResp(req.telemovelResp());
-        est.setTelefoneResp(req.telefoneResp());
+        est.setTelemovelResp(req.telemResp());
+        est.setTelefoneResp(req.telefResp());
         est.setEmailResp(req.emailResp());
         est.setEnderecoResp(req.enderecoResp());
         est.setDmNivelAcademico(req.nivelFormacaoAcademica());
