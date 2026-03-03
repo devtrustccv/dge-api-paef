@@ -5,6 +5,8 @@ import lombok.Builder;
 // domain/proconline/model/ProcOnlineRow.java
 @Builder
 public record ProcOnlineRow(
-        String idTpProcesso,
-        String tipoPedidoProcesso
+        String tipoPedidoProcesso,
+        String descricao,
+        String linkPage,
+        String linkDocHelp
 ) {}

@@ -9,6 +9,7 @@ import cv.gov.dge.paef.infrastructure.repository.VPagamentoRepository;
 import cv.gov.dge.paef.interfaces.dto.ApiResponse;
 import cv.gov.dge.paef.interfaces.dto.pagamento.PagamentoListResponse;
 import cv.gov.dge.paef.interfaces.dto.pagamento.PagamentoRowDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,17 +26,23 @@ public class PagamentoService {
     private final VPagamentoRepository vPagRepo;
     private final PagamentoRepository pagRepo;
     private final DominioService dominioService;
+    private final String linkPagarDuc;
+    private final String linkReportDuc;
 
     private static final DateTimeFormatter D = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public PagamentoService(EntidadeRepository entidadeRepo,
                             VPagamentoRepository vPagRepo,
                             PagamentoRepository pagRepo,
-                            DominioService dominioService) {
+                            DominioService dominioService,
+                            @Value("${duc.pagar_duc}") String linkPagarDuc,
+                            @Value("${duc.ver_duc}") String linkReportDuc) {
         this.entidadeRepo = entidadeRepo;
         this.vPagRepo = vPagRepo;
         this.pagRepo = pagRepo;
         this.dominioService = dominioService;
+        this.linkPagarDuc = linkPagarDuc;
+        this.linkReportDuc = linkReportDuc;
     }
 
     public ApiResponse<?> listar(BigDecimal nif, String idAlvara, String estado, String nrProcesso, Integer limit) {
@@ -85,6 +92,11 @@ public class PagamentoService {
                     .valor(formatCVE(p.getValor()))
                     .duc(p.getDuc())
                     .parcela(Utils.blank(p.getNrParcela()) ? "1" : p.getNrParcela())
+                    .linkVerDuc(linkReportDuc+p.getDuc())
+                    .linkPagar(linkPagarDuc.replace("$entidade$", p.getEntidade())
+                            .replace("$referencia$", p.getReferencia().toString())
+                            .replace("$montante$", p.getValor().toString())
+                    )
                     .build();
         }).toList();
 

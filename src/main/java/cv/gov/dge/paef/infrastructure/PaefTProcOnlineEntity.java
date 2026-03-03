@@ -43,4 +43,12 @@ public class PaefTProcOnlineEntity {
 
     @Column(name="data_update")
     private LocalDate dataUpdate;
+
+    @Column(name="tp_processo",nullable=true)
+    private String tpProcesso;
+
+    @Column(name="code_page",nullable=true)
+    private String codePage;
+
+    private String descricao;
 }

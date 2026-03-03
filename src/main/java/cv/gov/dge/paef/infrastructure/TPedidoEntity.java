@@ -52,6 +52,12 @@ public class TPedidoEntity {
     @Column(name = "id_processo")
     private BigDecimal idProcesso;
 
+    @Column(name = "valor_pago")
+    private BigDecimal valorPago;
+
+    @Column(name = "dt_pagamento")
+    private LocalDate dtPagamento;
+
     @Column(name = "id_etapa")
     private String idEtapa;
 

@@ -1,5 +1,6 @@
 package cv.gov.dge.paef.web.pagamento;
 
+import cv.gov.dge.paef.application.Pagamento.service.PagamentoConfirmacaoService;
 import cv.gov.dge.paef.application.Pagamento.service.PagamentoService;
 import cv.gov.dge.paef.interfaces.dto.EnvelopeData;
 import jakarta.validation.constraints.NotNull;
@@ -14,9 +15,11 @@ import java.math.BigDecimal;
 public class PagamentoController {
 
     private final PagamentoService service;
+    private final PagamentoConfirmacaoService pcService;
 
-    public PagamentoController(PagamentoService service) {
+    public PagamentoController(PagamentoService service, PagamentoConfirmacaoService pcService) {
         this.service = service;
+        this.pcService=pcService;
     }
 
     @GetMapping
@@ -28,5 +31,11 @@ public class PagamentoController {
             @RequestParam(value="limit", required=false) Integer limit
     ) {
         return ResponseEntity.ok(new EnvelopeData<>(service.listar(nif, alvara, estadoPagamento, nrProcesso, limit)));
+    }
+
+    @PostMapping("/confirmar")
+    public ResponseEntity<EnvelopeData<?>> confirmar( @RequestParam("nif") @NotNull @Positive BigDecimal nif,
+                                                      @RequestParam(value="duc") @NotNull @Positive String duc) {
+        return ResponseEntity.ok(new EnvelopeData<>(pcService.confirmar(nif, duc)));
     }
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 
 @Builder
 public record ProcOnlineDTO(
-        String idTpProcesso,
-        String tipoPedidoProcesso
+        String tipoPedidoProcesso,
+        String descricao,
+        String linkPage,
+        String linkDocHelp
 ) {}

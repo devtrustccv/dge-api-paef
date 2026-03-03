@@ -30,16 +30,9 @@ public class ProcOnlineBusiness {
                 : procRepo.findByIdTpProcesso("PED_REG");
 
         return procs.stream()
-                .map(p -> mapper.toModel(p, ProcessTypeResolver.resolveName(p.getIdTpProcesso())))
+                .map(mapper::toModel)
                 .toList();
     }
-    @Component
-    public class ProcessTypeResolver {
-        public static String resolveName(String idTpProcesso) {
-            // TODO: ligar ao teu catálogo real (tabela/domínio/config)
-            // por agora: devolve o próprio id como fallback
-            return idTpProcesso == null ? "" : idTpProcesso;
-        }
-    }
+
 }
 

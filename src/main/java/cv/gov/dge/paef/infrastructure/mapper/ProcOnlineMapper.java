@@ -3,23 +3,29 @@ package cv.gov.dge.paef.infrastructure.mapper;
 import cv.gov.dge.paef.domain.proconline.model.ProcOnlineRow;
 import cv.gov.dge.paef.infrastructure.PaefTProcOnlineEntity;
 import cv.gov.dge.paef.interfaces.dto.ProcOnlineDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 // infrastructure/mapper/ProcOnlineMapper.java
 @Component
 public class ProcOnlineMapper {
-
-    public ProcOnlineRow toModel(PaefTProcOnlineEntity e, String processoNome) {
+    @Value("${link.page.igrp}") String linkPage;
+    @Value("${link.page.document_viewer}") String linkDocViewer;
+    public ProcOnlineRow toModel(PaefTProcOnlineEntity e ) {
         return ProcOnlineRow.builder()
-                .idTpProcesso(e.getIdTpProcesso())
-                .tipoPedidoProcesso(processoNome)
+                .tipoPedidoProcesso(e.getTpProcesso())
+                .descricao(e.getDescricao())
+                .linkDocHelp(linkDocViewer+e.getDocClob())
+                .linkPage(linkPage.replace("$page$", e.getCodePage()))
                 .build();
     }
 
     public ProcOnlineDTO toDto(ProcOnlineRow m) {
         return ProcOnlineDTO.builder()
-                .idTpProcesso(m.idTpProcesso())
                 .tipoPedidoProcesso(m.tipoPedidoProcesso())
+                .descricao(m.descricao())
+                .linkDocHelp(m.linkDocHelp())
+                .linkPage(m.linkPage())
                 .build();
     }
 }

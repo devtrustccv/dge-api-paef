@@ -23,5 +23,7 @@ public record PagamentoRowDTO(
         String tipo,
         String valor,
         String duc,
-        String parcela
+        String parcela,
+        String linkVerDuc,
+        String linkPagar
 ) {}

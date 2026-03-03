@@ -4,5 +4,8 @@ import cv.gov.dge.paef.infrastructure.TPedidoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.math.BigDecimal;
+import java.util.Optional;
+
 public interface PedidoRepository extends JpaRepository<TPedidoEntity, String>, JpaSpecificationExecutor<TPedidoEntity> {
-}
+    Optional<TPedidoEntity> findByIdProcesso(BigDecimal idProcesso);}
