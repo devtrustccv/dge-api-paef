@@ -2,6 +2,7 @@ package cv.gov.dge.paef.application.notificacao.service;
 
 
 import cv.gov.dge.paef.application.domain.service.DominioService;
+import cv.gov.dge.paef.helpers.Utils;
 import cv.gov.dge.paef.infrastructure.DocumentoEntity;
 import cv.gov.dge.paef.infrastructure.repository.DocumentoRepository;
 import cv.gov.dge.paef.infrastructure.repository.EntidadeRepository;
@@ -75,15 +76,14 @@ public class NotificacaoDetalheService {
                 .id(notif.getId())
                 .assunto(notif.getAssunto())
                 .dataEnvio(notif.getDataEnvio() == null ? null : D.format(notif.getDataEnvio()))
-                .email(nullToEmpty(notif.getEmail()))
-                .meioEnvio(nullToEmpty(notif.getTipo()))
-                .telemovel(nullToEmpty(notif.getTelemovel()))
-                .mensagem(nullToEmpty(notif.getMensagem()))
+                .email(Utils.nullToEmpty(notif.getEmail()))
+                .meioEnvio(Utils.nullToEmpty(notif.getTipo()))
+                .telemovel(Utils.nullToEmpty(notif.getTelemovel()))
+                .mensagem(Utils.normalizeLinks(Utils.decorateLinks(Utils.nullToEmpty(notif.getMensagem()))))
                 .anexos(anexos)
                 .build();
 
         return ApiResponse.ok( "Detalhe notificação Caregado com sucesso", dto);
     }
 
-    private static String nullToEmpty(String s) { return s == null ? "" : s; }
 }
