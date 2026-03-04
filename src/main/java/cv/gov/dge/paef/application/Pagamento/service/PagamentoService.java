@@ -93,7 +93,7 @@ public class PagamentoService {
                     .duc(p.getDuc())
                     .parcela(Utils.blank(p.getNrParcela()) ? "1" : p.getNrParcela())
                     .linkVerDuc(linkReportDuc+p.getDuc())
-                    .linkPagar(linkPagarDuc.replace("$entidade$", p.getEntidade())
+                    .linkPagar(Utils.blank(p.getEntidade()) ? null : linkPagarDuc.replace("$entidade$", p.getEntidade())
                             .replace("$referencia$", p.getReferencia().toString())
                             .replace("$montante$", p.getValor().toString())
                     )

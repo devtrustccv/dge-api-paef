@@ -9,6 +9,7 @@ import cv.gov.dge.paef.interfaces.dto.ApiResponse;
 import cv.gov.dge.paef.interfaces.dto.Pedido.PedidoListFilter;
 import cv.gov.dge.paef.interfaces.dto.Pedido.PedidoListItemDTO;
 import cv.gov.dge.paef.interfaces.dto.Pedido.PedidoSpecs;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class PedidoService {
     private final EntidadeRepository entidadeRepository;
     private final DominioService dominioService;
     private static final DateTimeFormatter OUT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    @Value("${link.page.details_process}") String linkDetalhe;
 
     public PedidoService(PedidoRepository repo,
                          EntidadeRepository entidadeRepository,
@@ -92,6 +94,7 @@ public class PedidoService {
                     .idTask(p.getIdEtapa())
                     .etapaAtual(p.getEtapaAtual())
                     .idPedido(p.getId())
+                    .linkDetalhe(linkDetalhe+p.getIdEtapa())
                     .build();
         }).toList();
 
