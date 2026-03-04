@@ -9,5 +9,5 @@ public record ProcOnlineDTO(
         String tipoPedidoProcesso,
         String descricao,
         String linkPage,
-        String linkDocHelp
+        String docUuid
 ) {}

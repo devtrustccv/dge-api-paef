@@ -15,7 +15,7 @@ public class ProcOnlineMapper {
         return ProcOnlineRow.builder()
                 .tipoPedidoProcesso(e.getTpProcesso())
                 .descricao(e.getDescricao())
-                .linkDocHelp(linkDocViewer+e.getDocClob())
+                .docUuid(e.getDocClob())
                 .linkPage(linkPage.replace("$page$", e.getCodePage()))
                 .build();
     }
@@ -24,7 +24,7 @@ public class ProcOnlineMapper {
         return ProcOnlineDTO.builder()
                 .tipoPedidoProcesso(m.tipoPedidoProcesso())
                 .descricao(m.descricao())
-                .linkDocHelp(m.linkDocHelp())
+                .docUuid(m.docUuid())
                 .linkPage(m.linkPage())
                 .build();
     }

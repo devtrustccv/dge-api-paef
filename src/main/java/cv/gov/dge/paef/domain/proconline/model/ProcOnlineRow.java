@@ -8,5 +8,5 @@ public record ProcOnlineRow(
         String tipoPedidoProcesso,
         String descricao,
         String linkPage,
-        String linkDocHelp
+        String docUuid
 ) {}
