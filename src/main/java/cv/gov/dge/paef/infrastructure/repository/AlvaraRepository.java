@@ -97,7 +97,8 @@ public interface AlvaraRepository extends JpaRepository<AlvaraEntity, String> {
           v.telemovel_responsavel  as telemovelResponsavel,
           v.telefone_responsavel   as telefoneResponsavel,
           v.email_responsavel      as emailResponsavel,
-          v.dm_nivel_academico     as dmNivelAcademico
+          v.dm_nivel_academico     as dmNivelAcademico,
+          v.endereco_resp          as enderecoResp
         from paef.v_paef_alvara v
         where v.id_alvara = :idAlvara
         limit 1

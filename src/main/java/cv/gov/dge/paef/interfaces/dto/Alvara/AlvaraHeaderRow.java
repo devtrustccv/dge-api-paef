@@ -24,11 +24,12 @@ public interface AlvaraHeaderRow {
     String getTelefoneEstabelecimento();
     String getTelemovelEstabelecimento();
 
-    String getNomeRespoinsavel();
+    String getNomeResponsavel();
     String getDmTpDoc();
     String getNrDocResponsavel();
     String getTelemovelResponsavel();
     String getTelefoneResponsavel();
     String getEmailResponsavel();
     String getDmNivelAcademico();
+    String getEnderecoResp();
 }

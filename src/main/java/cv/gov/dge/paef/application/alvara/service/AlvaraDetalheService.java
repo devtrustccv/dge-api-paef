@@ -154,13 +154,13 @@ public class AlvaraDetalheService {
                 .telefone(h.getTelefoneEstabelecimento())
                 .telemovel(h.getTelemovelEstabelecimento())
 
-                .nomeResp(h.getNomeRespoinsavel())
+                .nomeResp(h.getNomeResponsavel())
                 .tipoDocumentoResp(h.getDmTpDoc())
                 .nrDocumentoResp(h.getNrDocResponsavel())
                 .telemovelResp(h.getTelemovelResponsavel())
                 .telefoneResp(h.getTelefoneResponsavel())
                 .emailResp(h.getEmailResponsavel())
-                .enderecoResp(null) // na view não vi endereco_resp; se existir na tabela, adicionamos
+                .enderecoResp(h.getEnderecoResp())
                 .nivelFormacaoAcademica(h.getDmNivelAcademico())
 
                 .formacoes(formacoes)
