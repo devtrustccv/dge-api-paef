@@ -47,5 +47,14 @@ public class TNotificacaoEntity {
     @Column(name = "data_envio")
     private LocalDateTime dataEnvio;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "telemovel")
+    private String telemovel;
+
+    @Column(name = "mensagem")
+    private String mensagem;
+
     // getters/setters
 }

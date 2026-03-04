@@ -1,5 +1,6 @@
 package cv.gov.dge.paef.web.notificacao;
 
+import cv.gov.dge.paef.application.notificacao.service.NotificacaoDetalheService;
 import cv.gov.dge.paef.application.notificacao.service.NotificacaoService;
 import cv.gov.dge.paef.interfaces.dto.EnvelopeData;
 import jakarta.validation.constraints.NotNull;
@@ -14,9 +15,11 @@ import java.math.BigDecimal;
 public class NotificacaoController {
 
     private final NotificacaoService service;
+    private final NotificacaoDetalheService dService;
 
-    public NotificacaoController(NotificacaoService service) {
+    public NotificacaoController(NotificacaoService service, NotificacaoDetalheService dService) {
         this.service = service;
+        this.dService = dService;
     }
 
     @GetMapping
@@ -27,5 +30,13 @@ public class NotificacaoController {
             @RequestParam(value = "limit", required = false) Integer limit
     ) {
         return ResponseEntity.ok(new EnvelopeData<>(service.listar(nif, alvara, periodo, limit)));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EnvelopeData<?>> detalhe(
+            @RequestParam("nif") @NotNull @Positive BigDecimal nif,
+            @PathVariable("id") String idNotificacao
+    ) {
+        return ResponseEntity.ok(new EnvelopeData<>(dService.detalhe(nif, idNotificacao)));
     }
 }
