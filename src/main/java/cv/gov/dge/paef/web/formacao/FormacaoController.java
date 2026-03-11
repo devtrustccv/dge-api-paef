@@ -4,11 +4,14 @@ import cv.gov.dge.paef.application.formacao.service.FormacaoService;
 import cv.gov.dge.paef.infrastructure.FormacaoEntity;
 import cv.gov.dge.paef.infrastructure.mapper.FormacaoMapper;
 import cv.gov.dge.paef.application.formacao.dto.FormacaoDTO;
+import cv.gov.dge.paef.interfaces.dto.EnvelopeData;
+import cv.gov.dge.paef.interfaces.dto.Qualificacao.FormacaoOutroDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController @RequestMapping("/formacoes")
 public class FormacaoController {
@@ -19,5 +22,12 @@ public class FormacaoController {
     public ResponseEntity<FormacaoEntity> create(@Valid @RequestBody FormacaoDTO dto){
         var saved = service.save(mapper.toEntity(dto));
         return ResponseEntity.created(URI.create("/api/formacoes/" + saved.getId())).body(saved);
+    }
+    @GetMapping("/outro")
+    public ResponseEntity<EnvelopeData<List<FormacaoOutroDto>>> listarFormacoesOutro() {
+
+        List<FormacaoOutroDto> data = service.listarFormacoesOutro();
+
+        return ResponseEntity.ok(new EnvelopeData<>(data));
     }
 }
