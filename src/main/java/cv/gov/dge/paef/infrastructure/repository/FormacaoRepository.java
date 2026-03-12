@@ -36,7 +36,7 @@ public interface FormacaoRepository extends JpaRepository<FormacaoEntity, String
         f.qualificacao,
         coalesce(f.dm_nivel_romano,f.dm_nivel_arabico) nivel
     from paef.v_paef_formacoes f
-    join paef.paef_t_alvara a on a.id = f.id_alvara
+    join paef.paef_t_alvara a on a.id = f.id_alvara and a.dm_situacao='A'
     join paef.paef_t_entidade e on e.id = a.id_entidade
     where f.id_qualificacao = 'OUTRO'
     order by a.nr_alvara
