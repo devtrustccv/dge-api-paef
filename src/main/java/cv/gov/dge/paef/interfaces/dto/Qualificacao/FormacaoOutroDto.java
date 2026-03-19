@@ -14,4 +14,5 @@ public class FormacaoOutroDto {
     private String familia;
     private String qualificacao;
     private String nivel;
+    private String idFormacao;
 }
