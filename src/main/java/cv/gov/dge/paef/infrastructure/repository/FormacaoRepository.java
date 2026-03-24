@@ -62,7 +62,7 @@ public interface FormacaoRepository extends JpaRepository<FormacaoEntity, String
     @Query(value = """
         select
             e.nif::text as nif,
-            coalesce(e.denominacao_comercial, e.denominacao_social) as designacaoComercial,
+            coalesce(nullif(trim(e.denominacao_comercial), ''), e.denominacao_social) as designacaoComercial,
             gi.nome as ilhaNome,
             gc.nome as concelhoNome,
             gc.id::text as concelhoId,
