@@ -2,9 +2,9 @@
 package cv.gov.dge.paef.infrastructure.repository;
 
 import cv.gov.dge.paef.infrastructure.EntidadeEntity;
-import cv.gov.dge.paef.interfaces.dto.AcreditacaoProjection;
-import cv.gov.dge.paef.interfaces.dto.EntidadeAcreditacaoRow;
-import cv.gov.dge.paef.interfaces.dto.EntidadePffpRow;
+import cv.gov.dge.paef.interfaces.dto.Alvara.AcreditacaoProjection;
+import cv.gov.dge.paef.interfaces.dto.Entidade.EntidadeAcreditacaoRow;
+import cv.gov.dge.paef.interfaces.dto.Entidade.EntidadePffpRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

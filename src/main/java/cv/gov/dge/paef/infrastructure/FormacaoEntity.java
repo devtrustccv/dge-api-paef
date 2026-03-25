@@ -58,6 +58,12 @@ public class FormacaoEntity {
     @Column(name="dm_estado")
     private String dmEstado;
 
+    @Column(name="sended_to_rvcc")
+    private String sendedToRvcc;
+
+    @Column(name="flag_rvcc")
+    private boolean flagRvcc;
+
     @Column
     private String versao;            // -> versao
 }
