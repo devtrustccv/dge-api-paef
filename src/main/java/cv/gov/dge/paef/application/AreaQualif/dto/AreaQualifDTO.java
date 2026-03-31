@@ -15,5 +15,5 @@ public record AreaQualifDTO(
         String nivel,
         String codigoFamilia,
         String denominacaoFamilia,
-        String tipo// não persiste aqui
+        String tipoIntegracao
 ) { }

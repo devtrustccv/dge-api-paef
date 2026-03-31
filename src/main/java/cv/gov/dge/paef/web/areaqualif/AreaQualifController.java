@@ -33,9 +33,9 @@ public class AreaQualifController {
             for (AreaQualifDTO dto : dtos) {
                 if (dto.codigoQualif() != null && dto.versao() != null) {
                     var existing = service.findExisting(dto.codigoQualif(), dto.versao());
-                    if (!existing && dto.tipo().equals("PUBLICADO")) {
+                    if (!existing && dto.tipoIntegracao().equals("PUBLICADO")) {
                         AreaQualif saved = service.createOrUpdate(dto);
-                    }else if(dto.tipo().equals("REVOGADO")){
+                    }else if(dto.tipoIntegracao().equals("REVOGADO")){
 
                     }
                 }
