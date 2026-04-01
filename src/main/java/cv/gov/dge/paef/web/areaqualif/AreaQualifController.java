@@ -25,31 +25,18 @@ public class AreaQualifController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<ApiResponse<List<AreaQualifDTO>>> create(@Valid @RequestBody EnvelopeData<List<AreaQualifDTO>> datas) {
-        List<AreaQualifDTO> dtos = datas.getData();
-        System.out.println("here");
-        boolean success = true;
+    public ResponseEntity<ApiResponse<?>> create(
+            @Valid @RequestBody EnvelopeData<List<AreaQualifDTO>> datas
+    ) {
         try {
-            for (AreaQualifDTO dto : dtos) {
-                if (dto.codigoQualif() != null && dto.versao() != null) {
-                    var existing = service.findExisting(dto.codigoQualif(), dto.versao());
-                    if (!existing && dto.tipo().equals("PUBLICADO")) {
-                        AreaQualif saved = service.createOrUpdate(dto);
-                    }else if(dto.tipo().equals("REVOGADO")){
-
-                    }
-                }
-            }
-        }catch (Exception e){
-            success=false;
+            var result = service.processQualificacoes(datas.getData());
+            return ResponseEntity.ok(
+                    ApiResponse.ok("Qualificações processadas com sucesso", result)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.fail(
+                            "Erro ao consumir o endpoint: " + e.getMessage(), datas));
         }
-        if(success)
-            return ResponseEntity
-                .created(null)
-                .body(ApiResponse.ok("Qualificações registadas com sucesso", dtos));
-        else
-            return ResponseEntity
-                .created(null)
-                .body(ApiResponse.ok("Erro ao consumir o endpoint", null));
     }
 }

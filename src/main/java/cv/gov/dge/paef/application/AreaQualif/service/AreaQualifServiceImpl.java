@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,29 +34,35 @@ public class AreaQualifServiceImpl implements AreaQualifService {
      */
     @Transactional
     public AreaQualif createOrUpdate(AreaQualifDTO dto) {
-        AreaQualif model = mapper.toModel(dto);
 
-        // defaults / normalização
-        if (model.getEstado() == null || model.getEstado().isBlank()) {
-            model.setEstado("A");
-        }
-        // id já mapeado para codigoQualif; garante sigla
-        if (model.getSiglaCodigo() == null || model.getSiglaCodigo().isBlank()) {
-            model.setSiglaCodigo(model.getSiglaCodigo());
-        }
-        String familiaCod = dto.codigoFamilia();
-        String familiaDesc = dto.denominacaoFamilia();
+        String familiaCod = dto.getCodigoFamilia();
+        String familiaDesc = dto.getDenominacaoFamilia();
         String familiaId = null;
 
         if (familiaCod != null && !familiaCod.isBlank()) {
             AreaQualifEntity familia = bus.findOrCreateFamily(familiaCod, familiaDesc);
             familiaId = familia.getId();
         }
-        if (familiaId != null) {
-            model.setIdPai(familiaId);
+
+        // procurar existente
+        AreaQualifEntity entity = bus.findBySiglaCodigoAndVersao(dto.getCodigoQualif(), dto.getVersao())
+                .orElseGet(AreaQualifEntity::new);
+
+        // mapear/update dos campos
+        entity.setSiglaCodigo(dto.getCodigoQualif());
+        entity.setVersao(dto.getVersao());
+        entity.setDescricao(dto.getDenominacaoQualif());
+        entity.setDmNivelArabico(dto.getNivel());
+        entity.setSelfIdCnq(dto.getSelfId() != null ? dto.getSelfId().toString() : null);
+
+        if (entity.getEstado() == null || entity.getEstado().isBlank()) {
+            entity.setEstado("A");
         }
-        // upsert simples: como PK = id, save() resolve insert/update
-        AreaQualifEntity entity = mapper.toEntity(model);
+
+        if (familiaId != null) {
+            entity.setIdPai(familiaId);
+        }
+
         AreaQualifEntity saved = bus.save(entity);
 
         return mapper.toModel(saved);
@@ -63,4 +71,63 @@ public class AreaQualifServiceImpl implements AreaQualifService {
     public boolean findExisting(String codigo, String versao){
         return bus.existsQualification(codigo, versao);
     }
+
+    @Override
+    @Transactional
+    public AreaQualif revoke(AreaQualifDTO dto) {
+        return mapper.toModel(bus.revoke(dto));
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Integer> processQualificacoes(List<AreaQualifDTO> dtos) {
+
+        int criados = 0;
+        int atualizados = 0;
+        int revogados = 0;
+        int ignorados = 0;
+        int rvccCount = 0;
+
+        for (AreaQualifDTO dto : dtos) {
+
+            if (dto.getCodigoQualif() == null || dto.getVersao() == null) {
+                ignorados++;
+                continue;
+            }
+
+            boolean existing = bus.findExisting(dto.getCodigoQualif(), dto.getVersao());
+
+            if ("PUBLICADO".equals(dto.getTipoIntegraca())) {
+                if (existing) {
+                    atualizados++;
+                } else {
+                    createOrUpdate(dto);
+                    criados++;
+                }
+
+            } else if ("REVOGADO".equals(dto.getTipoIntegraca())) {
+                if (existing) {
+                    bus.revoke(dto);
+                    revogados++;
+                } else {
+                    ignorados++;
+                }
+            }else if ("RVCC".equals(dto.getTipoIntegraca())) {
+                bus.markAsRvcc(dto);
+                rvccCount++;
+            } else {
+                ignorados++;
+            }
+        }
+
+        return Map.of(
+                "criados", criados,
+                "atualizados", atualizados,
+                "revogados", revogados,
+                "rvcc", rvccCount,
+                "ignorados", ignorados,
+                "total", dtos.size()
+        );
+    }
+
 }
