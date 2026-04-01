@@ -16,7 +16,7 @@ public interface AreaQualifMapper {
     @Mapping(target = "dmNivelArabico", source = "nivel")
     @Mapping(target = "descricao",      source = "denominacaoQualif")
     @Mapping(target = "versao",         source = "versao")
-    @Mapping(target = "selfIdCnq",      expression = "java(dto.selfId()==null?null:String.valueOf(dto.selfId()))")
+    @Mapping(target = "selfIdCnq",      expression = "java(dto.getSelfId()==null?null:String.valueOf(dto.getSelfId()))")
     @Mapping(target = "estado",         constant = "A")
     AreaQualif toModel(AreaQualifDTO dto);
 

@@ -1,5 +1,6 @@
 package cv.gov.dge.paef.infrastructure.repository;
 
+import cv.gov.dge.paef.domain.areaqualif.model.AreaQualif;
 import cv.gov.dge.paef.infrastructure.AreaQualifEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -25,5 +26,6 @@ public interface AreaQualifRepository extends JpaRepository<AreaQualifEntity, St
     default boolean existsQualification(String siglaCodigo, String versao) {
         return findFirstBySiglaCodigoIgnoreCaseAndVersaoIgnoreCaseAndIdPaiIsNotNull(siglaCodigo, versao).isPresent();
     }
+    Optional<AreaQualifEntity> findBySiglaCodigoAndVersao(String siglaCodigo, String versao);
 }
 

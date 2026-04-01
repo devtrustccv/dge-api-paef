@@ -34,4 +34,7 @@ public class AreaQualifEntity {
 
     @Column(name = "versao")
     private String versao; // versao
+
+    @Column(name = "rvcc")
+    private Boolean rvcc;
 }

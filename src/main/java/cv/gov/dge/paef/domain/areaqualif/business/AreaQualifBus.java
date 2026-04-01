@@ -8,6 +8,8 @@ import cv.gov.dge.paef.infrastructure.mapper.AreaQualifMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 public interface AreaQualifBus {
     AreaQualifEntity save(AreaQualifEntity entity);
@@ -16,4 +18,8 @@ public interface AreaQualifBus {
     AreaQualifEntity findOrCreateFamily(String codigoFamilia, String denominacaoFamilia);
     AreaQualifEntity createFamily(String codigoFamilia, String denominacaoFamilia);
     boolean existsQualification(String codigoQualif, String versao);
+    AreaQualifEntity revoke(AreaQualifDTO dto);
+    boolean findExisting(String codigoQualif, String versao);
+    AreaQualifEntity markAsRvcc(AreaQualifDTO dto);
+    Optional<AreaQualifEntity> findBySiglaCodigoAndVersao(String siglaCodigo, String versao);
     }

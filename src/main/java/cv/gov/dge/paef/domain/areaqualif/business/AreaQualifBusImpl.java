@@ -6,10 +6,13 @@ import cv.gov.dge.paef.domain.areaqualif.model.AreaQualif;
 import cv.gov.dge.paef.infrastructure.AreaQualifEntity;
 import cv.gov.dge.paef.infrastructure.mapper.AreaQualifMapper;
 import cv.gov.dge.paef.infrastructure.repository.AreaQualifRepository;
+import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -72,5 +75,45 @@ public class AreaQualifBusImpl implements AreaQualifBus {
     public boolean existsQualification(String codigoQualif, String versao) {
         return repo.existsQualification(codigoQualif, versao);
     }
+
+
+        @Override
+        public AreaQualifEntity revoke(AreaQualifDTO dto) {
+            AreaQualifEntity entity = repo
+                    .findBySiglaCodigoAndVersao(dto.getCodigoQualif(), dto.getVersao())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Qualificação não encontrada para código "
+                                    + dto.getCodigoQualif() + " e versão " + dto.getVersao()
+                    ));
+
+            entity.setEstado("I");
+            entity.setRvcc(false);
+            return repo.save(entity);
+        }
+
+        @Override
+        public boolean findExisting(String codigoQualif, String versao) {
+            return repo.findBySiglaCodigoAndVersao(codigoQualif, versao).isPresent();
+        }
+
+    @Override
+    public AreaQualifEntity markAsRvcc(AreaQualifDTO dto) {
+
+        AreaQualifEntity entity = repo
+                .findBySiglaCodigoAndVersao(dto.getCodigoQualif(), dto.getVersao())
+                .orElseThrow(() -> new RuntimeException(
+                        "Qualificação não encontrada para código "
+                                + dto.getCodigoQualif() + " e versão " + dto.getVersao()
+                ));
+
+        entity.setRvcc(true);
+
+        return repo.save(entity);
+    }
+    @Override
+    public Optional<AreaQualifEntity> findBySiglaCodigoAndVersao(String siglaCodigo, String versao) {
+        return repo.findBySiglaCodigoAndVersao(siglaCodigo, versao);
+    }
+
 
 }
