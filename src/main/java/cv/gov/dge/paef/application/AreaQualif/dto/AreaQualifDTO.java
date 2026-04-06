@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * DTO de entrada/saída para criação de área/qualificação.
  * Campos extras como denominacaoFamilia são aceitos mas não persistidos nesta tabela.
@@ -28,4 +30,6 @@ public class AreaQualifDTO{
     String denominacaoFamilia;
     @JsonProperty("tipoIntegracao")
     String tipoIntegraca;
+    @JsonProperty("novasQualificacoes")
+    List<AreaQualifDTO> novasQualificacoes;
 }
