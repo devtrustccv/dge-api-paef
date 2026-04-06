@@ -127,4 +127,12 @@ public interface FormacaoRepository extends JpaRepository<FormacaoEntity, String
       and f.sendedToRvcc is null
 """)
     int markAsSentToRvcc(@Param("ids") List<String> ids);
+
+    List<FormacaoEntity> findByIdQualificacao(String idQualificacao);
+
+    boolean existsByIdAlvaraAndIdQualificacaoAndDmEstado(
+            String idAlvara,
+            String idQualificacao,
+            String dmEstado
+    );
 }

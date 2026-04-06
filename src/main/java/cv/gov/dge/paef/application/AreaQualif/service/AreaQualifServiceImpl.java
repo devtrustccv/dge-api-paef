@@ -1,6 +1,7 @@
 package cv.gov.dge.paef.application.AreaQualif.service;
 
 import cv.gov.dge.paef.application.AreaQualif.dto.AreaQualifDTO;
+import cv.gov.dge.paef.application.AreaQualif.dto.RevogacaoResult;
 import cv.gov.dge.paef.domain.areaqualif.business.AreaQualifBus;
 import cv.gov.dge.paef.domain.areaqualif.model.AreaQualif;
 import cv.gov.dge.paef.domain.areaqualif.model.DuplicateQualificationException;
@@ -85,8 +86,10 @@ public class AreaQualifServiceImpl implements AreaQualifService {
         int criados = 0;
         int atualizados = 0;
         int revogados = 0;
+        int rvcc = 0;
         int ignorados = 0;
-        int rvccCount = 0;
+        int acreditacoesInativadas = 0;
+        int acreditacoesPendentesCriadas = 0;
 
         for (AreaQualifDTO dto : dtos) {
 
@@ -98,23 +101,27 @@ public class AreaQualifServiceImpl implements AreaQualifService {
             boolean existing = bus.findExisting(dto.getCodigoQualif(), dto.getVersao());
 
             if ("PUBLICADO".equals(dto.getTipoIntegraca())) {
-                if (existing) {
-                    atualizados++;
-                } else {
-                    createOrUpdate(dto);
-                    criados++;
-                }
+                createOrUpdate(dto);
+                if (existing) atualizados++;
+                else criados++;
 
             } else if ("REVOGADO".equals(dto.getTipoIntegraca())) {
-                if (existing) {
-                    bus.revoke(dto);
+
+                RevogacaoResult result = bus.revokeAndReplace(dto);
+
+                if (result.qualificacaoRevogada()) {
                     revogados++;
                 } else {
                     ignorados++;
                 }
-            }else if ("RVCC".equals(dto.getTipoIntegraca())) {
+
+                acreditacoesInativadas += result.acreditacoesInativadas();
+                acreditacoesPendentesCriadas += result.acreditacoesPendentesCriadas();
+
+            } else if ("RVCC".equals(dto.getTipoIntegraca())) {
                 bus.markAsRvcc(dto);
-                rvccCount++;
+                rvcc++;
+
             } else {
                 ignorados++;
             }
@@ -124,8 +131,10 @@ public class AreaQualifServiceImpl implements AreaQualifService {
                 "criados", criados,
                 "atualizados", atualizados,
                 "revogados", revogados,
-                "rvcc", rvccCount,
+                "rvcc", rvcc,
                 "ignorados", ignorados,
+                "acreditacoesInativadas", acreditacoesInativadas,
+                "acreditacoesPendentesCriadas", acreditacoesPendentesCriadas,
                 "total", dtos.size()
         );
     }

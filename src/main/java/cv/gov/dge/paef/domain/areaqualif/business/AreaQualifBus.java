@@ -1,13 +1,16 @@
 package cv.gov.dge.paef.domain.areaqualif.business;
 
 import cv.gov.dge.paef.application.AreaQualif.dto.AreaQualifDTO;
+import cv.gov.dge.paef.application.AreaQualif.dto.RevogacaoResult;
 import cv.gov.dge.paef.application.AreaQualif.service.AreaQualifService;
 import cv.gov.dge.paef.domain.areaqualif.model.AreaQualif;
 import cv.gov.dge.paef.infrastructure.AreaQualifEntity;
+import cv.gov.dge.paef.infrastructure.FormacaoEntity;
 import cv.gov.dge.paef.infrastructure.mapper.AreaQualifMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -22,4 +25,7 @@ public interface AreaQualifBus {
     boolean findExisting(String codigoQualif, String versao);
     AreaQualifEntity markAsRvcc(AreaQualifDTO dto);
     Optional<AreaQualifEntity> findBySiglaCodigoAndVersao(String siglaCodigo, String versao);
-    }
+    RevogacaoResult revokeAndReplace(AreaQualifDTO dto);
+    AreaQualifEntity findOrCreateQualification(AreaQualifDTO dto);
+    AreaQualifEntity findById(String id);
+}
