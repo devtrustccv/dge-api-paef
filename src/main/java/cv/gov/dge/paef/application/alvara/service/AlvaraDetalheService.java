@@ -71,7 +71,7 @@ public class AlvaraDetalheService {
         List<FormacaoDTO> formacoes = formRepo.findByAlvara(idAlvara).stream().map(f -> {
 
             String nivel;
-
+            boolean show = false;
             if (CONTINUA.equals(f.getDmTipoFormacao())) {
                 nivel = "Sem Nivel";
 
@@ -83,7 +83,7 @@ public class AlvaraDetalheService {
                         .description();
 
             } else {
-
+                show=true;
                 nivel = dominioService
                         .getDesc("NIVEL_ROMANO", f.getDmNivelRomano())
                         .description();
@@ -98,6 +98,7 @@ public class AlvaraDetalheService {
                     .qualificacaoFormacao(f.getQualificacao())
                     .tipo(tipo)
                     .metodologia(metodologia)
+                    .showPrograma(show)
                     .build();
         }).toList();
 

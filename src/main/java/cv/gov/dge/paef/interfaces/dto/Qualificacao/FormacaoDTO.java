@@ -8,5 +8,6 @@ public record FormacaoDTO(
         String nivel,
         String qualificacaoFormacao,
         String tipo,
-        String metodologia
+        String metodologia,
+        boolean showPrograma
 ) {}
