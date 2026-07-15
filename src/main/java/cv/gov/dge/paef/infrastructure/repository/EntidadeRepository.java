@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public interface EntidadeRepository extends JpaRepository<EntidadeEntity, BigDecimal> {
+public interface EntidadeRepository extends JpaRepository<EntidadeEntity, String> {
 
     Optional<EntidadeEntity> findByNif(BigDecimal nif);
 
