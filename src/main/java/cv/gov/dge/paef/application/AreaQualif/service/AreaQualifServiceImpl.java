@@ -9,6 +9,7 @@ import cv.gov.dge.paef.infrastructure.AreaQualifEntity;
 import cv.gov.dge.paef.infrastructure.mapper.AreaQualifMapper;
 import cv.gov.dge.paef.infrastructure.repository.AreaQualifRepository;
 import cv.gov.dge.paef.interfaces.dto.ApiResponse;
+import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class AreaQualifServiceImpl implements AreaQualifService {
 
     private final AreaQualifBus bus;
     private final AreaQualifMapper mapper;
+    private final AreaQualifRepository repo;
 
     /**
      * Cria/atualiza registro da paef.paef_t_area_qualif.
@@ -137,6 +139,17 @@ public class AreaQualifServiceImpl implements AreaQualifService {
                 "acreditacoesPendentesCriadas", acreditacoesPendentesCriadas,
                 "total", dtos.size()
         );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OptionDTO> listQualificacoesByFamilia(String idFamilia) {
+        return repo.findQualificacoesByFamilia(idFamilia).stream()
+                .map(r -> OptionDTO.builder()
+                        .key(r.getKey())
+                        .value(r.getValue())
+                        .build())
+                .toList();
     }
 
 }

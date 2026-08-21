@@ -2,6 +2,7 @@
 package cv.gov.dge.paef.infrastructure.repository;
 
 import cv.gov.dge.paef.infrastructure.FormacaoEntity;
+import cv.gov.dge.paef.interfaces.dto.OptionRow;
 import cv.gov.dge.paef.interfaces.dto.Qualificacao.FormacaoOutroDto;
 import cv.gov.dge.paef.interfaces.dto.Qualificacao.FormacaoRow;
 import cv.gov.dge.paef.interfaces.dto.Qualificacao.RvccFormacaoRow;
@@ -29,6 +30,37 @@ public interface FormacaoRepository extends JpaRepository<FormacaoEntity, String
         where f.id_alvara = :idAlvara
         """, nativeQuery = true)
     List<FormacaoRow> findByAlvara(@Param("idAlvara") String idAlvara);
+
+    @Query(value = """
+        select distinct
+          coalesce(
+            case when area.id is not null and area.id_pai is null then area.id end,
+            area_fam.id,
+            qual_fam.id
+          ) as key,
+          coalesce(
+            case when area.id is not null and area.id_pai is null then area.descricao end,
+            area_fam.descricao,
+            qual_fam.descricao
+          ) as value
+        from paef.paef_t_formacao f
+        left join paef.paef_t_area_qualif area
+          on area.id::text = f.id_area_qualif::text
+        left join paef.paef_t_area_qualif area_fam
+          on area_fam.id::text = area.id_pai::text
+        left join paef.paef_t_area_qualif qual
+          on qual.id::text = f.id_qualificacao::text
+        left join paef.paef_t_area_qualif qual_fam
+          on qual_fam.id::text = qual.id_pai::text
+        where f.id_alvara = :idAlvara
+          and coalesce(
+            case when area.id is not null and area.id_pai is null then area.id end,
+            area_fam.id,
+            qual_fam.id
+          ) is not null
+        order by value
+        """, nativeQuery = true)
+    List<OptionRow> findFamiliasByAlvara(@Param("idAlvara") String idAlvara);
 
     @Query(value = """
     select
@@ -134,5 +166,23 @@ public interface FormacaoRepository extends JpaRepository<FormacaoEntity, String
             String idAlvara,
             String idQualificacao,
             String dmEstado
+    );
+
+    @Query(value = """
+        select count(1) > 0
+        from paef.paef_t_formacao f
+        where f.id_alvara = :idAlvara
+          and f.id_qualificacao = 'OUTRO'
+          and f.id_area_qualif = :idAreaQualif
+          and lower(trim(f.qualificacao_desc)) = lower(trim(:qualificacaoDesc))
+          and f.dm_nivel_romano = :dmNivelRomano
+          and f.dm_estado = :dmEstado
+        """, nativeQuery = true)
+    boolean existsOutroAtivoByAlvaraFamiliaQualificacaoNivel(
+            @Param("idAlvara") String idAlvara,
+            @Param("idAreaQualif") String idAreaQualif,
+            @Param("qualificacaoDesc") String qualificacaoDesc,
+            @Param("dmNivelRomano") String dmNivelRomano,
+            @Param("dmEstado") String dmEstado
     );
 }

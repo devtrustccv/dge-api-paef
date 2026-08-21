@@ -6,6 +6,7 @@ import cv.gov.dge.paef.domain.areaqualif.business.AreaQualifBus;
 import cv.gov.dge.paef.application.AreaQualif.dto.AreaQualifDTO;
 import cv.gov.dge.paef.interfaces.dto.ApiResponse;
 import cv.gov.dge.paef.interfaces.dto.EnvelopeData;
+import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,12 @@ public class AreaQualifController {
 
     private final AreaQualifService service;
 
+    @GetMapping("/familias/{idFamilia}/qualificacoes")
+    public ResponseEntity<EnvelopeData<List<OptionDTO>>> qualificacoesByFamilia(
+            @PathVariable String idFamilia
+    ) {
+        return ResponseEntity.ok(new EnvelopeData<>(service.listQualificacoesByFamilia(idFamilia)));
+    }
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse<?>> create(
