@@ -19,6 +19,7 @@ public interface FormacaoRepository extends JpaRepository<FormacaoEntity, String
 
     @Query(value = """
         select
+          f.id_formacao     as idFormacao,
           f.familia         as familia,
           f.dm_tipo_formacao as dmTipoFormacao,
           f.id_qualificacao  as idQualificacao,

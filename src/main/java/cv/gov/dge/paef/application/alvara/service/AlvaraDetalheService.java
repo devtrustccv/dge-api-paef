@@ -9,6 +9,7 @@ import cv.gov.dge.paef.interfaces.dto.EquipamentoRow;
 import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import cv.gov.dge.paef.interfaces.dto.Qualificacao.FormacaoDTO;
 import cv.gov.dge.paef.interfaces.dto.logs.HistoricoDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,9 @@ public class AlvaraDetalheService {
     private final DominioService dominioService; // teu serviço de domínios
 
     // Ajusta para teu config
+    @Value("${link.page.programa_formativo}")
+    private String linkProgramaFormativo;
+
     private static final String OUTRO = "OUTRO";
     private static final String CONTINUA = "CONTINUA";
 
@@ -98,6 +102,7 @@ public class AlvaraDetalheService {
                     .qualificacaoFormacao(f.getQualificacao())
                     .tipo(tipo)
                     .metodologia(metodologia)
+                    .linkProgramaFormativo(buildLinkProgramaFormativo(f.getIdFormacao()))
                     .showPrograma(show)
                     .build();
         }).toList();
@@ -171,5 +176,12 @@ public class AlvaraDetalheService {
                 .build();
 
         return ApiResponse.ok("Detalhe Alvará carregado com sucesso",dto);
+    }
+
+    private String buildLinkProgramaFormativo(String idFormacao) {
+        if (idFormacao == null || idFormacao.isBlank()) {
+            return null;
+        }
+        return linkProgramaFormativo + "&p_id=" + idFormacao;
     }
 }
