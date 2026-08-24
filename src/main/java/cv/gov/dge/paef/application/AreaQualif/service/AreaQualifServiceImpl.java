@@ -144,12 +144,20 @@ public class AreaQualifServiceImpl implements AreaQualifService {
     @Override
     @Transactional(readOnly = true)
     public List<OptionDTO> listQualificacoesByFamilia(String idFamilia) {
-        return repo.findQualificacoesByFamilia(idFamilia).stream()
+        List<OptionDTO> options = repo.findQualificacoesByFamilia(idFamilia).stream()
                 .map(r -> OptionDTO.builder()
                         .key(r.getKey())
                         .value(r.getValue())
                         .build())
                 .toList();
+
+        List<OptionDTO> result = new java.util.ArrayList<>(options);
+        result.add(OptionDTO.builder()
+                .key("OUTRO")
+                .value("Outro")
+                .build());
+
+        return result;
     }
 
 }

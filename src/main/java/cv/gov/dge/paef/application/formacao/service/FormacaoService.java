@@ -33,6 +33,7 @@ public class FormacaoService {
     private static final String ESTADO_ATIVO = "A";
     private static final String VERSAO_DEFAULT = "1";
     private static final String NIVEL_SEM_NIVEL = "SN";
+    private static final String METODOLOGIA_DEFAULT = "PRESENCIAL";
 
     private final FormacaoRepository repo;
     private final AreaQualifRepository areaQualifRepo;
@@ -82,12 +83,12 @@ public class FormacaoService {
                 .dmTipoFormacao(TIPO_CONTINUA)
                 .idAreaQualif(req.idAreaQualif())
                 .idQualificacao(req.idQualificacao())
-                .areaDesc(valueOrDefault(familia.getDescricao(), req.areaDesc()))
+                .areaDesc(familia.getDescricao())
                 .qualificacaoDesc(outro ? req.qualificacaoDesc() : valueOrDefault(qualificacao.getDescricao(), req.qualificacaoDesc()))
                 .dmNivelRomano(NIVEL_SEM_NIVEL)
                 .flagCatalogo(outro ? NAO : SIM)
                 .dtRegisto(LocalDate.now())
-                .dmMetodologia(req.dmMetodologia())
+                .dmMetodologia(METODOLOGIA_DEFAULT)
                 .selfIdCnq(selfIdCnq)
                 .versao(versao)
                 .dmEstado(ESTADO_ATIVO)

@@ -6,7 +6,5 @@ public record FormacaoContinuaRequest(
         @NotBlank String idAlvara,
         @NotBlank String idAreaQualif,
         @NotBlank String idQualificacao,
-        String areaDesc,
-        String qualificacaoDesc,
-        @NotBlank String dmMetodologia
+        String qualificacaoDesc
 ) {}
