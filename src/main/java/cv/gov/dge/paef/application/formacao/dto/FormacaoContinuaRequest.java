@@ -8,6 +8,5 @@ public record FormacaoContinuaRequest(
         @NotBlank String idQualificacao,
         String areaDesc,
         String qualificacaoDesc,
-        @NotBlank String dmNivelRomano,
         @NotBlank String dmMetodologia
 ) {}
