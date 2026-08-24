@@ -3,7 +3,7 @@ package cv.gov.dge.paef.infrastructure;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 
@@ -12,8 +12,12 @@ import java.time.LocalDate;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class FormacaoEntity {
     @Id
-    @UuidGenerator
-    @Column(length = 128, nullable = false)
+    @GeneratedValue(generator = "uuid-no-dash")
+    @GenericGenerator(
+            name = "uuid-no-dash",
+            strategy = "cv.gov.dge.paef.helpers.CustomUuidGenerator"
+    )
+    @Column(length = 32, nullable = false)
     private String id;
 
     @Column(name="id_alvara", nullable=false, length=128)
