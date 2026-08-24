@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service @Transactional
 public class FormacaoService {
@@ -48,7 +47,6 @@ public class FormacaoService {
     }
 
     public FormacaoEntity createContinua(FormacaoContinuaRequest req) {
-        String idFormacao = UUID.randomUUID().toString().replace("-", "");
         boolean outro = OUTRO.equalsIgnoreCase(req.idQualificacao());
 
         AreaQualifEntity familia = areaQualifRepo.findById(req.idAreaQualif())
@@ -74,11 +72,10 @@ public class FormacaoService {
             throw new IllegalArgumentException("Formacao ja existe no alvara informado");
         }
 
-        String selfIdCnq = outro ? idFormacao : valueOrDefault(qualificacao.getSelfIdCnq(), idFormacao);
+        String selfIdCnq = outro ? null : qualificacao.getSelfIdCnq();
         String versao = outro ? VERSAO_DEFAULT : valueOrDefault(qualificacao.getVersao(), VERSAO_DEFAULT);
 
         FormacaoEntity entity = FormacaoEntity.builder()
-                .id(idFormacao)
                 .idAlvara(req.idAlvara())
                 .dmTipoFormacao(TIPO_CONTINUA)
                 .idAreaQualif(req.idAreaQualif())
@@ -94,7 +91,15 @@ public class FormacaoService {
                 .dmEstado(ESTADO_ATIVO)
                 .build();
 
-        return repo.save(entity);
+        FormacaoEntity saved = repo.save(entity);
+
+        if (outro) {
+            saved.setSelfIdCnq(saved.getId());
+        } else if (isBlank(saved.getSelfIdCnq())) {
+            saved.setSelfIdCnq(saved.getId());
+        }
+
+        return saved;
     }
 
     public List<FormacaoOutroDto> listarFormacoesOutro(FormacaoOutroFilter filter) {
