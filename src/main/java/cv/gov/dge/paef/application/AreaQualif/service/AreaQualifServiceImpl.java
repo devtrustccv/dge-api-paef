@@ -151,11 +151,12 @@ public class AreaQualifServiceImpl implements AreaQualifService {
                         .build())
                 .toList();
 
-        List<OptionDTO> result = new java.util.ArrayList<>(options);
+        List<OptionDTO> result = new java.util.ArrayList<>();
         result.add(OptionDTO.builder()
                 .key("OUTRO")
                 .value("Outro")
                 .build());
+        result.addAll(options);
 
         return result;
     }
