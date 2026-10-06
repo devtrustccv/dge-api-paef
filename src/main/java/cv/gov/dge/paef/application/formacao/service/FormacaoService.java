@@ -30,7 +30,7 @@ public class FormacaoService {
     private static final String SIM = "SIM";
     private static final String NAO = "NAO";
     private static final String ESTADO_ATIVO = "A";
-    private static final String VERSAO_DEFAULT = "1";
+    private static final String VERSAO_DEFAULT = "0";
     private static final String NIVEL_SEM_NIVEL = "SN";
     private static final String METODOLOGIA_DEFAULT = "PRESENCIAL";
 
