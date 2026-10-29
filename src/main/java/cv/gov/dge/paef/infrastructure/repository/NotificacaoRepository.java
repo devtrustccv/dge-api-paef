@@ -5,6 +5,9 @@ import cv.gov.dge.paef.interfaces.dto.notificacao.NotificacaoRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
@@ -12,6 +15,12 @@ import java.util.List;
 
 public interface NotificacaoRepository
         extends JpaRepository<TNotificacaoEntity, String>, JpaSpecificationExecutor<TNotificacaoEntity> {
+    @Modifying
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Query("update TNotificacaoEntity n set n.dataEnvio = :dataEnvio where n.id = :id")
+    int markEnviada(@Param("id") String id, @Param("dataEnvio") LocalDateTime dataEnvio);
+
+
     @Query("""
   select
     n.id as id,
