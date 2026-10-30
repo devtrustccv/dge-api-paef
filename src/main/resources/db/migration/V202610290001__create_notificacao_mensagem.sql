@@ -9,5 +9,5 @@ CREATE TABLE if not exists paef.paef_t_notificacao_mensagem (
         FOREIGN KEY (id_notificacao) REFERENCES paef.t_notificacao (id)
 );
 
-CREATE INDEX idx_notificacao_mensagem_historico
+CREATE INDEX if not exists idx_notificacao_mensagem_historico
     ON paef.paef_t_notificacao_mensagem (id_notificacao, data_registro, id);
