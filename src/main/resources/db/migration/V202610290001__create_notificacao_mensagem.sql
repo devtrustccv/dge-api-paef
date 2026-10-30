@@ -1,4 +1,4 @@
-CREATE TABLE paef.paef_t_notificacao_mensagem (
+CREATE TABLE if not exists paef.paef_t_notificacao_mensagem (
     id VARCHAR(128) PRIMARY KEY,
     id_notificacao VARCHAR(128) NOT NULL,
     email VARCHAR(254) NOT NULL,
