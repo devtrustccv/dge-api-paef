@@ -2,6 +2,7 @@ package cv.gov.dge.paef.application.alvara.service;
 
 import cv.gov.dge.paef.infrastructure.AlvaraEntity;
 import cv.gov.dge.paef.infrastructure.repository.AlvaraRepository;
+import cv.gov.dge.paef.infrastructure.repository.FormacaoRepository;
 import cv.gov.dge.paef.interfaces.dto.Alvara.AlvaraListItemDTO;
 import cv.gov.dge.paef.interfaces.dto.OptionDTO;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,24 @@ public class AlvaraService {
     private static final String ESTADO_CADUCVALIDO = "CADUCVALIDO";
 
     private final AlvaraRepository repo;
-    public AlvaraService(AlvaraRepository repo){ this.repo = repo; }
+    private final FormacaoRepository formacaoRepo;
+    public AlvaraService(AlvaraRepository repo, FormacaoRepository formacaoRepo){
+        this.repo = repo;
+        this.formacaoRepo = formacaoRepo;
+    }
     public AlvaraEntity save(AlvaraEntity e){ return repo.save(e); }
     public List<OptionDTO> listOptionsByEntidadeNif(Long nif) {
         var rows = repo.findAlvarasOptionsByNif(new BigDecimal(nif));
         return rows.stream()
+                .map(r -> OptionDTO.builder()
+                        .key(r.getKey())
+                        .value(r.getValue())
+                        .build())
+                .toList();
+    }
+
+    public List<OptionDTO> listFamiliasByAlvara(String idAlvara) {
+        return formacaoRepo.findFamiliasByAlvara(idAlvara).stream()
                 .map(r -> OptionDTO.builder()
                         .key(r.getKey())
                         .value(r.getValue())

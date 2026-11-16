@@ -48,6 +48,10 @@ public class AlvaraController {
     ) {
         return ResponseEntity.ok(new EnvelopeData<>(service.listValidosByNif(nif, limit)));
     }
+    @GetMapping("/{idAlvara}/familias")
+    public ResponseEntity<EnvelopeData<List<OptionDTO>>> familiasByAlvara(@PathVariable String idAlvara) {
+        return ResponseEntity.ok(new EnvelopeData<>(service.listFamiliasByAlvara(idAlvara)));
+    }
     @GetMapping("/{idAlvara}/detalhes")
     public ResponseEntity<EnvelopeData<?>> detalhes(@PathVariable String idAlvara) {
         return ResponseEntity.ok(new EnvelopeData<>(detService.detalhes(idAlvara)));

@@ -1,6 +1,7 @@
 package cv.gov.dge.paef.interfaces.dto.Qualificacao;
 
 public interface FormacaoRow {
+    String getIdFormacao();
     String getFamilia();
     String getDmTipoFormacao();
     String getIdQualificacao();

@@ -1,8 +1,11 @@
 // src/main/java/cv/gov/dge/paef/domain/formacao/FormacaoService.java
 package cv.gov.dge.paef.application.formacao.service;
 
+import cv.gov.dge.paef.application.formacao.dto.FormacaoContinuaRequest;
 import cv.gov.dge.paef.helpers.Utils;
+import cv.gov.dge.paef.infrastructure.AreaQualifEntity;
 import cv.gov.dge.paef.infrastructure.FormacaoEntity;
+import cv.gov.dge.paef.infrastructure.repository.AreaQualifRepository;
 import cv.gov.dge.paef.infrastructure.repository.FormacaoRepository;
 import cv.gov.dge.paef.interfaces.dto.ApiResponse;
 import cv.gov.dge.paef.interfaces.dto.Entidade.RvccEntidadeDTO;
@@ -14,6 +17,7 @@ import cv.gov.dge.paef.interfaces.dto.Qualificacao.RvccQualificacaoDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,14 +25,81 @@ import java.util.Map;
 
 @Service @Transactional
 public class FormacaoService {
-    private final FormacaoRepository repo;
+    private static final String TIPO_CONTINUA = "CONTINUA";
+    private static final String OUTRO = "OUTRO";
+    private static final String SIM = "SIM";
+    private static final String NAO = "NAO";
+    private static final String ESTADO_ATIVO = "A";
+    private static final String VERSAO_DEFAULT = "0";
+    private static final String NIVEL_SEM_NIVEL = "SN";
+    private static final String METODOLOGIA_DEFAULT = "PRESENCIAL";
 
-    public FormacaoService(FormacaoRepository repo) {
+    private final FormacaoRepository repo;
+    private final AreaQualifRepository areaQualifRepo;
+
+    public FormacaoService(FormacaoRepository repo, AreaQualifRepository areaQualifRepo) {
         this.repo = repo;
+        this.areaQualifRepo = areaQualifRepo;
     }
 
     public FormacaoEntity save(FormacaoEntity e) {
         return repo.save(e);
+    }
+
+    public FormacaoEntity createContinua(FormacaoContinuaRequest req) {
+        boolean outro = OUTRO.equalsIgnoreCase(req.idQualificacao());
+
+        AreaQualifEntity familia = areaQualifRepo.findById(req.idAreaQualif())
+                .orElseThrow(() -> new IllegalArgumentException("Família não encontrada"));
+
+        if (!isBlank(familia.getIdPai())) {
+            throw new IllegalArgumentException("idAreaQualif deve identificar uma familia");
+        }
+
+        AreaQualifEntity qualificacao = null;
+        if (!outro) {
+            qualificacao = areaQualifRepo.findById(req.idQualificacao())
+                    .orElseThrow(() -> new IllegalArgumentException("Qualificação não encontrada"));
+
+            if (!req.idAreaQualif().equals(qualificacao.getIdPai())) {
+                throw new IllegalArgumentException("Qualificação não pertence à família informada");
+            }
+        } else if (isBlank(req.qualificacaoDesc())) {
+            throw new IllegalArgumentException("qualificacaoDesc é obrigatório quando idQualificacao é OUTRO");
+        }
+
+        if (existsFormacaoAtiva(req, outro)) {
+            throw new IllegalArgumentException("Formacao ja existe no alvara informado");
+        }
+
+        String selfIdCnq = outro ? null : qualificacao.getSelfIdCnq();
+        String versao = outro ? VERSAO_DEFAULT : valueOrDefault(qualificacao.getVersao(), VERSAO_DEFAULT);
+
+        FormacaoEntity entity = FormacaoEntity.builder()
+                .idAlvara(req.idAlvara())
+                .dmTipoFormacao(TIPO_CONTINUA)
+                .idAreaQualif(req.idAreaQualif())
+                .idQualificacao(req.idQualificacao())
+                .areaDesc(familia.getDescricao())
+                .qualificacaoDesc(outro ? req.qualificacaoDesc() : valueOrDefault(qualificacao.getDescricao(), req.qualificacaoDesc()))
+                .dmNivelRomano(NIVEL_SEM_NIVEL)
+                .flagCatalogo(outro ? NAO : SIM)
+                .dtRegisto(LocalDate.now())
+                .dmMetodologia(METODOLOGIA_DEFAULT)
+                .selfIdCnq(selfIdCnq)
+                .versao(versao)
+                .dmEstado(ESTADO_ATIVO)
+                .build();
+
+        FormacaoEntity saved = repo.save(entity);
+
+        if (outro) {
+            saved.setSelfIdCnq(saved.getId());
+        } else if (isBlank(saved.getSelfIdCnq())) {
+            saved.setSelfIdCnq(saved.getId());
+        }
+
+        return saved;
     }
 
     public List<FormacaoOutroDto> listarFormacoesOutro(FormacaoOutroFilter filter) {
@@ -144,5 +215,30 @@ public class FormacaoService {
                     "Registos marcados como enviados com sucesso", null
             );
         }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
+    private static String valueOrDefault(String value, String fallback) {
+        return isBlank(value) ? fallback : value;
+    }
+
+    private boolean existsFormacaoAtiva(FormacaoContinuaRequest req, boolean outro) {
+        if (outro) {
+            return repo.existsOutroAtivoByAlvaraFamiliaQualificacaoNivel(
+                    req.idAlvara(),
+                    req.idAreaQualif(),
+                    req.qualificacaoDesc(),
+                    NIVEL_SEM_NIVEL,
+                    ESTADO_ATIVO
+            );
+        }
+
+        return repo.existsByIdAlvaraAndIdQualificacaoAndDmEstado(
+                req.idAlvara(),
+                req.idQualificacao(),
+                ESTADO_ATIVO
+        );
+    }
+    }

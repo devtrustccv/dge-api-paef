@@ -2,6 +2,90 @@
 
 
 
+## Envio de email
+
+Injetar `cv.gov.dge.paef.application.generic.service.EmailService` nos serviços que necessitam de enviar email:
+
+```java
+emailService.sendText(destinatario, assunto, mensagem);
+emailService.sendHtml(destinatario, assunto, "<p>Mensagem</p>");
+```
+
+O envio usa uma fila assíncrona em memória. `sendText` deteta HTML automaticamente. Falhas de SMTP e rejeições da fila ficam registadas nos logs; o retorno do método não confirma a entrega e não existem tentativas automáticas de reenvio.
+
+Configuração: `spring.mail.*` para SMTP, `application.mail.enabled` para ativar/desativar o envio e `MAIL_FROM` para substituir o remetente (por padrão, a conta SMTP). O ficheiro de exemplo usa `SMTP_PASSWORD` para a palavra-passe. As configurações SMTP foram copiadas do `zeemsv-api`.
+
+Teste isolado, sem ligação ao SMTP nem à base de dados: `mvn -Dtest=EmailServiceTest test`.
+
+## Criar notificação
+
+`POST /api/notificacoes` (`/api` é o context-path configurado).
+
+```json
+{
+  "nif": 123456789,
+  "email": "autor@example.com",
+  "assunto": "Nova notificação",
+  "mensagem": "<p>Mensagem para os técnicos PAEF.</p>",
+  "id_alvara": "id-opcional",
+  "id_processo": "processo-opcional",
+  "id_pagina_etapa": "etapa-opcional"
+}
+```
+
+`nif`, `email`, `assunto` e `mensagem` são obrigatórios; os restantes campos podem ser omitidos. Assunto limitado a 255 caracteres e mensagem a 4000. O alvará, quando informado, deve pertencer à entidade do NIF.
+
+Cria um único registo em `paef.t_notificacao`. O email recebido fica guardado nesse registo; os destinatários do envio são exclusivamente os endereços de `paef.paef_t_emails`, coluna `email`. Os endereços vazios são ignorados e os duplicados são eliminados sem distinguir maiúsculas de minúsculas. Configuração sem destinatários ou com endereço inválido impede a criação.
+
+O retorno é HTTP 201 com `data.success`, `data.message` e `data.data` (ID, email, assunto, mensagem, data de registo, tipo e total de destinatários). A criação confirma o registo, não a entrega dos emails. O envio ocorre após o commit; `data_envio` só é preenchida depois de o SMTP aceitar todos os envios. Se um falhar, o registo permanece e a data continua vazia. A fila é em memória, sem reenvio automático.
+
+Testes sem SMTP nem base de dados: `mvn -Dtest=EmailServiceTest,NotificacaoCreateServiceTest,NotificacaoEmailListenerTest,NotificacaoControllerTest test`.
+
+## Responder a uma notificação
+
+`POST /api/notificacoes/{id}/respostas`
+
+```json
+{
+  "nif": 123456789,
+  "email": "autor@example.com",
+  "mensagem": "<p>Resposta à notificação.</p>"
+}
+```
+
+Todos os campos são obrigatórios. A mensagem aceita texto ou HTML, até 4000 caracteres. A entidade do NIF deve corresponder à relação `ENTIDADE` da notificação. O assunto do email é `Re: ` seguido do assunto original.
+
+Retorna HTTP 201 com a mensagem criada no envelope `data.data`. Cada chamada cria apenas uma linha em `paef.paef_t_notificacao_mensagem`, ligada por chave estrangeira a `paef.t_notificacao`. A notificação original mantém-se intacta. O email recebido identifica o autor no registo; o envio é exclusivamente para todos os emails configurados em `paef.paef_t_emails`, sem duplicados. O envio ocorre depois do commit e a data de envio da mensagem só é preenchida após sucesso de todos os envios SMTP. Mantém-se a fila em memória, sem reenvio automático.
+
+`GET /api/notificacoes/{id}/mensagens?nif=123456789` devolve as respostas por ordem cronológica, com ID, ID da notificação, email, mensagem, data de registo e data de envio. O GET de detalhe da notificação (`GET /api/notificacoes/{id}?nif=...`) inclui também o campo `respostas`, por ordem cronológica, com os anexos de cada resposta. Sem respostas, devolve uma lista vazia.
+
+A migração Flyway `V202610290001__create_notificacao_mensagem.sql` cria a tabela e o índice do histórico. Deve ser aplicada na base de dados antes de utilizar estes endpoints; não foi executada durante os testes locais.
+
+Testes sem SMTP nem base de dados: `mvn -Dtest=EmailServiceTest,Notificacao*Test test`.
+
+## Anexos de notificações e respostas
+
+Os dois POST aceitam também `multipart/form-data`. Enviar uma parte JSON com `Content-Type: application/json`, chamada `notificacao` na criação ou `resposta` na resposta, e repetir a parte `anexos` para cada ficheiro:
+
+```bash
+curl -X POST http://localhost:8080/api/notificacoes \
+  -F 'notificacao={"nif":123456789,"email":"autor@example.com","assunto":"Assunto","mensagem":"Mensagem"};type=application/json' \
+  -F 'anexos=@prova.pdf' \
+  -F 'anexos=@comprovativo.pdf'
+
+curl -X POST http://localhost:8080/api/notificacoes/ID/respostas \
+  -F 'resposta={"nif":123456789,"email":"autor@example.com","mensagem":"Resposta"};type=application/json' \
+  -F 'anexos=@resposta.pdf'
+```
+
+As chamadas JSON sem anexos continuam disponíveis. Limites: 5 ficheiros, 5 MB por ficheiro e 10 MB no total. Ficheiros vazios são rejeitados.
+
+Os ficheiros ficam na coluna binária `file` de `paef.paef_t_documento`, com nome em `descricao`, tipo MIME em `content_type` e ligação à notificação (`NOTIFICACAO`) ou à mensagem (`NOTIFICACAO_MENSAGEM`). O registo e os documentos são gravados na mesma transação. O envio assíncrono inclui os ficheiros originais como anexos MIME, para cada destinatário configurado.
+
+Os retornos dos POST, o detalhe da notificação e o histórico de mensagens incluem `anexos`, com metadados e o link `documento`. O download usa `GET /api/notificacoes/{id}/anexos/{idDocumento}?nif=...`, validando a entidade e a ligação do documento à notificação ou a uma das suas respostas.
+
+A migração `V202610290002__documento_content_type.sql` acrescenta a coluna `content_type`. Deve ser aplicada antes de usar esta versão; não foi executada na base de dados durante os testes.
+
 ## Getting started
 
 To make it easy for you to get started with GitLab, here's a list of recommended next steps.

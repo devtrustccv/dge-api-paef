@@ -1,5 +1,6 @@
 package cv.gov.dge.paef.web.formacao;
 
+import cv.gov.dge.paef.application.formacao.dto.FormacaoContinuaRequest;
 import cv.gov.dge.paef.application.formacao.service.FormacaoService;
 import cv.gov.dge.paef.infrastructure.FormacaoEntity;
 import cv.gov.dge.paef.infrastructure.mapper.FormacaoMapper;
@@ -25,6 +26,11 @@ public class FormacaoController {
     @PostMapping
     public ResponseEntity<FormacaoEntity> create(@Valid @RequestBody FormacaoDTO dto){
         var saved = service.save(mapper.toEntity(dto));
+        return ResponseEntity.created(URI.create("/api/formacoes/" + saved.getId())).body(saved);
+    }
+    @PostMapping("/continua")
+    public ResponseEntity<FormacaoEntity> createContinua(@Valid @RequestBody FormacaoContinuaRequest body){
+        var saved = service.createContinua(body);
         return ResponseEntity.created(URI.create("/api/formacoes/" + saved.getId())).body(saved);
     }
     @GetMapping("/outro")

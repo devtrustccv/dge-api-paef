@@ -23,4 +23,13 @@ public class DocumentoEntity {
 
     @Column(name="doc_clob")
     private String docClob;
+
+    @Column(name="descricao")
+    private String descricao;
+
+    @Column(name="content_type", length=255)
+    private String contentType;
+
+    @Column(name="file")
+    private byte[] file;
 }

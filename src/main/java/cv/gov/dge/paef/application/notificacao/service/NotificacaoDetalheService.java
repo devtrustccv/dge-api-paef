@@ -25,6 +25,7 @@ public class NotificacaoDetalheService {
     private final NotificacaoRepository notificacaoRepo;
     private final DocumentoRepository documentoRepo;
     private final DominioService dominioService;
+    private final NotificacaoRespostaService respostaService;
     //private final FileLinkService fileLinkService;
 
     private static final DateTimeFormatter D = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -33,13 +34,15 @@ public class NotificacaoDetalheService {
             EntidadeRepository entidadeRepo,
             NotificacaoRepository notificacaoRepo,
             DocumentoRepository documentoRepo,
-            DominioService dominioService
+            DominioService dominioService,
+            NotificacaoRespostaService respostaService
            // FileLinkService fileLinkService
     ) {
         this.entidadeRepo = entidadeRepo;
         this.notificacaoRepo = notificacaoRepo;
         this.documentoRepo = documentoRepo;
         this.dominioService = dominioService;
+        this.respostaService = respostaService;
         //this.fileLinkService = fileLinkService;
     }
 
@@ -66,12 +69,14 @@ public class NotificacaoDetalheService {
 
         List<DocumentoEntity> docs = documentoRepo.findByTipoRelacaoAndIdRelacao("NOTIFICACAO", notif.getId());
 
-        List<NotificacaoAnexoDTO> anexos = docs.stream().map(doc -> NotificacaoAnexoDTO.builder()
-                .tipoDocumento(dominioService.getDesc("TIPO_DOCUMENTO", doc.getDmTipoDocumento()).description())
-                .documento(doc.getDocClob()) // equivale ao Core.getLinkFileByUuid
-                .build()
-        ).toList();
-
+        List<NotificacaoAnexoDTO> anexos = docs.stream().map(doc -> {
+            if (doc.getFile() != null) return NotificacaoAnexoService.toDTO(doc);
+            return NotificacaoAnexoDTO.builder()
+                    .tipoDocumento(doc.getDmTipoDocumento() == null ? "Anexo"
+                            : dominioService.getDesc("TIPO_DOCUMENTO", doc.getDmTipoDocumento()).description())
+                    .documento(doc.getDocClob())
+                    .build();
+        }).toList();
         var dto = NotificacaoDetalheResponseDTO.builder()
                 .id(notif.getId())
                 .assunto(notif.getAssunto())
@@ -81,6 +86,7 @@ public class NotificacaoDetalheService {
                 .telemovel(Utils.nullToEmpty(notif.getTelemovel()))
                 .mensagem(Utils.normalizeLinks(Utils.decorateLinks(Utils.nullToEmpty(notif.getMensagem()))))
                 .anexos(anexos)
+                .respostas(respostaService.listar(idNotificacao, nif))
                 .build();
 
         return ApiResponse.ok( "Detalhe notificação Caregado com sucesso", dto);

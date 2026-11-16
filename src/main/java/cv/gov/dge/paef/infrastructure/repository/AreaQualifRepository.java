@@ -2,8 +2,12 @@ package cv.gov.dge.paef.infrastructure.repository;
 
 import cv.gov.dge.paef.domain.areaqualif.model.AreaQualif;
 import cv.gov.dge.paef.infrastructure.AreaQualifEntity;
+import cv.gov.dge.paef.interfaces.dto.OptionRow;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AreaQualifRepository extends JpaRepository<AreaQualifEntity, String> {
@@ -27,5 +31,16 @@ public interface AreaQualifRepository extends JpaRepository<AreaQualifEntity, St
         return findFirstBySiglaCodigoIgnoreCaseAndVersaoIgnoreCaseAndIdPaiIsNotNull(siglaCodigo, versao).isPresent();
     }
     Optional<AreaQualifEntity> findBySiglaCodigoAndVersao(String siglaCodigo, String versao);
+
+    @Query(value = """
+        select
+          q.id as key,
+          q.descricao as value
+        from paef.paef_t_area_qualif q
+        where q.id_pai = :idFamilia
+          and q.estado = 'A'
+        order by q.descricao
+        """, nativeQuery = true)
+    List<OptionRow> findQualificacoesByFamilia(@Param("idFamilia") String idFamilia);
 }
 

@@ -12,5 +12,6 @@ public record NotificacaoDetalheResponseDTO(
         String meioEnvio,
         String telemovel,
         String mensagem,
-        List<NotificacaoAnexoDTO> anexos
+        List<NotificacaoAnexoDTO> anexos,
+        List<NotificacaoMensagemDTO> respostas
 ) {}
