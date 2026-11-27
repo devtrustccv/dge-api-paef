@@ -18,6 +18,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class NotificacaoRespostaControllerTest {
     @Test
+    void acceptsMultipartReplyWithoutAttachments() throws Exception {
+        var service = mock(NotificacaoRespostaService.class);
+        var mensagem = new NotificacaoMensagemDTO("mensagem-1", "notificacao-1", "autor@example.com",
+                "Resposta", LocalDateTime.now(), null);
+        when(service.responder(eq("notificacao-1"), any(), isNull())).thenReturn(mensagem);
+        var mvc = MockMvcBuilders.standaloneSetup(new NotificacaoRespostaController(service))
+                .setControllerAdvice(new ApiExceptionHandler()).build();
+        var resposta = new org.springframework.mock.web.MockMultipartFile(
+                "resposta", "", "application/json", """
+                {"nif":123456789,"email":"autor@example.com","mensagem":"Resposta"}
+                """.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        mvc.perform(multipart("/notificacoes/notificacao-1/respostas").file(resposta))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.success").value(true));
+        verify(service).responder(eq("notificacao-1"), any(), isNull());
+    }
+
+    @Test
     void createsReplyAndListsHistoryWithValidation() throws Exception {
         var service = mock(NotificacaoRespostaService.class);
         var mensagem = new NotificacaoMensagemDTO("mensagem-1", "notificacao-1", "autor@example.com",

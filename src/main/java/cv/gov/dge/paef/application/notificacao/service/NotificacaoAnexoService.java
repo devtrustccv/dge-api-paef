@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -65,6 +66,7 @@ public class NotificacaoAnexoService {
             }
             var doc = new DocumentoEntity();
             doc.setId(UUID.randomUUID().toString());
+            doc.setDataRegisto(LocalDate.now());
             doc.setTipoRelacao(tipoRelacao);
             doc.setIdRelacao(idRelacao);
             doc.setDescricao(nome);

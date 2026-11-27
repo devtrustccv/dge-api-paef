@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +36,12 @@ class NotificacaoAnexoServiceTest {
     void storesBinaryAndMetadataForBothRelationsAndBuildsDownloadLinks() {
         var upload = new MockMultipartFile("anexos", "C:\\temp\\prova.pdf", "application/pdf", bytes);
         for (String tipo : List.of("NOTIFICACAO", "NOTIFICACAO_MENSAGEM")) {
+            var antes = LocalDate.now();
             var docs = service.guardar(tipo, "relacao-1", "notificacao-1", NIF, List.of(upload));
             var doc = docs.get(0);
+            assertNotNull(doc.getDataRegisto());
+            assertFalse(doc.getDataRegisto().isBefore(antes));
+            assertFalse(doc.getDataRegisto().isAfter(LocalDate.now()));
             assertEquals(tipo, doc.getTipoRelacao());
             assertEquals("relacao-1", doc.getIdRelacao());
             assertEquals("prova.pdf", doc.getDescricao());

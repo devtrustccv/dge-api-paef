@@ -3,6 +3,7 @@ package cv.gov.dge.paef.infrastructure;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDate;
 
 @Entity
 @Table(name="paef_t_documento", schema="paef")
@@ -11,6 +12,9 @@ public class DocumentoEntity {
 
     @Id
     private String id;
+
+    @Column(name="data_registo", nullable=false)
+    private LocalDate dataRegisto;
 
     @Column(name="tipo_relacao")
     private String tipoRelacao;

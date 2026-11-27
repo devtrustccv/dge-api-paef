@@ -30,6 +30,11 @@ public class NotificacaoRespostaController {
     }
 
     @PostMapping(value = "/respostas", consumes = "multipart/form-data")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content =
+            @io.swagger.v3.oas.annotations.media.Content(
+                    mediaType = "multipart/form-data",
+                    encoding = @io.swagger.v3.oas.annotations.media.Encoding(
+                            name = "resposta", contentType = "application/json")))
     public ResponseEntity<EnvelopeData<?>> responderComAnexos(@PathVariable("id") String id,
             @Valid @RequestPart("resposta") NotificacaoRespostaRequestDTO dto,
             @RequestPart(value = "anexos", required = false) java.util.List<org.springframework.web.multipart.MultipartFile> anexos) {
