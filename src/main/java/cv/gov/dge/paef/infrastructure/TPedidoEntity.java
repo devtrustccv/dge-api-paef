@@ -64,5 +64,8 @@ public class TPedidoEntity {
     @Column(name = "etapa_atual")
     private String etapaAtual;
 
+    @Column(name = "desc_etapa_atual")
+    private String descEtapaAtual;
+
     // getters/setters
 }

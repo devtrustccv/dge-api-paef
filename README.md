@@ -1,5 +1,30 @@
 # dge-api-paef
 
+## Processos pendentes de correção
+
+`GET /api/processos_pendentes?nif_entidade=123456789`
+
+Lista todos os pedidos de `paef.t_pedido` da entidade identificada pelo NIF cuja
+`etapa_atual` seja `correcao` ou `correcao_visita`, por data de registo e ID
+decrescentes, sem paginação nem filtro adicional de estado ou tipo de processo.
+Usa os mesmos campos da listagem de pedidos, incluindo `id_pedido`, `id_task`,
+`etapa_atual` e `link_detalhe`, no envelope `data.data`.
+Sem resultados, devolve uma lista vazia; entidade inexistente devolve `data.success=false`.
+
+Testes: `mvn -Dtest=ProcessosPendentesServiceTest,ProcessosPendentesControllerTest test`.
+
+## Pedidos pendentes de uma entidade
+
+`GET /api/pedidos-pendentes?nif_entidade=123456789`
+
+Lista todos os registos de `paef.t_pedido_pendente` da entidade identificada pelo NIF,
+exclusivamente no estado `PENDENTE`, ordenados por `data_pedido` e `id` decrescentes.
+O NIF é obrigatório. A resposta usa `data.success`, `data.message` e `data.data`.
+Uma entidade sem pedidos pendentes recebe uma lista vazia; um NIF não encontrado
+recebe `success=false`. O conteúdo binário `xml` não é incluído na listagem.
+
+Testes: `mvn -Dtest=PedidoPendenteServiceTest,PedidoPendenteControllerTest test`.
+
 
 
 ## Envio de email

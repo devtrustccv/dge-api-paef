@@ -14,6 +14,7 @@ public record PedidoListItemDTO(
         String idProcesso,
         String idTask,
         String etapaAtual,
+        String descEtapaAtual,
         String idPedido,
         String linkDetalhe
 ) {}

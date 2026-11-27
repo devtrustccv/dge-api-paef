@@ -68,7 +68,23 @@ public class PedidoService {
         var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dtRegisto"));
         Page<TPedidoEntity> rows = repo.findAll(spec, pageable);
 
-        List<PedidoListItemDTO> data = rows.getContent().stream().map(p -> {
+        List<PedidoListItemDTO> data = rows.getContent().stream().map(this::toListItem).toList();
+
+        return ApiResponse.ok("Lista Caregada com sucesso", data);
+    }
+
+    public ApiResponse<List<PedidoListItemDTO>> listarProcessosPendentes(BigDecimal nifEntidade) {
+        var entidade = entidadeRepository.findByNif(nifEntidade);
+        if (entidade.isEmpty()) {
+            return ApiResponse.fail("Entidade não encontrada para o NIF informado", null);
+        }
+        var data = repo.findByIdEntidadeAndEtapaAtualInOrderByDtRegistoDescIdDesc(
+                        entidade.get().getId(), List.of("correcao", "correcao_visita"))
+                .stream().map(this::toListItem).toList();
+        return ApiResponse.ok("Lista carregada com sucesso", data);
+    }
+
+    private PedidoListItemDTO toListItem(TPedidoEntity p) {
 
             String user= p.getNomeEntrega();
 
@@ -93,11 +109,9 @@ public class PedidoService {
                     .idProcesso(p.getIdProcesso().toString())
                     .idTask(p.getIdEtapa())
                     .etapaAtual(p.getEtapaAtual())
+                    .descEtapaAtual(p.getDescEtapaAtual())
                     .idPedido(p.getId())
                     .linkDetalhe(linkDetalhe+p.getIdEtapa())
                     .build();
-        }).toList();
-
-        return  ApiResponse.ok( "Lista Caregada com sucesso", data);
     }
 }

@@ -53,8 +53,9 @@ public class NotificacaoService {
             return ApiResponse.fail( "Entidade não encontrada para o NIF informado", null);
         }
 
-        if(Utils.blank(limit.toString()))
-            limit=100;
+        if (limit == null) {
+            limit = 100;
+        }
         LocalDate[] range = PeriodoParser.parse(periodo);
         LocalDate de = range[0];
         LocalDate ate = range[1];

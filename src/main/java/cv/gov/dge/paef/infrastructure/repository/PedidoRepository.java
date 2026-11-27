@@ -6,6 +6,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<TPedidoEntity, String>, JpaSpecificationExecutor<TPedidoEntity> {
-    Optional<TPedidoEntity> findByIdProcesso(BigDecimal idProcesso);}
+    Optional<TPedidoEntity> findByIdProcesso(BigDecimal idProcesso);
+
+    List<TPedidoEntity> findByIdEntidadeAndEtapaAtualInOrderByDtRegistoDescIdDesc(
+            String idEntidade, List<String> etapas);
+}
